@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arabic Name Generator</title>
+    <title>Unique Arabic Name Generator</title>
     <style>
         * {
             box-sizing: border-box;
@@ -29,7 +29,6 @@
             width: 100%;
             max-width: 480px;
             text-align: center;
-            position: relative;
         }
 
         h2 {
@@ -207,69 +206,91 @@
 
     <!-- Actions -->
     <div class="action-btns">
-        <button class="btn-primary" onclick="generateName()">Generate Name</button>
+        <button class="btn-primary" onclick="generateUniqueName()">Generate Unique Name</button>
         <button class="btn-secondary" id="fullCopyBtn" onclick="copyFullName(this)">Copy Full Name</button>
     </div>
 </div>
 
 <script>
-    // Pure Arabic First Names
-    const firstNames = [
-        // Male
-        { ar: "طارق", gender: "male" },
-        { ar: "زايد", gender: "male" },
-        { ar: "فارس", gender: "male" },
-        { ar: "كريم", gender: "male" },
-        { ar: "عمر", gender: "male" },
-        { ar: "أمير", gender: "male" },
-        { ar: "حمزة", gender: "male" },
-        { ar: "يوسف", gender: "male" },
-        // Female
-        { ar: "نور", gender: "female" },
-        { ar: "ليلى", gender: "female" },
-        { ar: "زهراء", gender: "female" },
-        { ar: "آية", gender: "female" },
-        { ar: "مريم", gender: "female" },
-        { ar: "أميرة", gender: "female" },
-        { ar: "سارة", gender: "female" },
-        { ar: "فاطمة", gender: "female" }
+    // Male First Name Pool
+    const maleFirsts = [
+        "طارق", "زايد", "فارس", "كريم", "عمر", "أمير", "حمزة", "يوسف", 
+        "عبد الله", "عبد الرحمن", "سيف", "بدر", "أحمد", "محمود", "زياد", 
+        "راشد", "سعود", "فيصل", "خالد", "سهيل", "ياسين", "سليم", "بلال"
     ];
 
-    // Pure Arabic Last Names
-    const lastNames = [
-        { ar: "المصري" },
-        { ar: "الحسن" },
-        { ar: "النجار" },
-        { ar: "السيّد" },
-        { ar: "الشريف" },
-        { ar: "الملك" },
-        { ar: "العلي" },
-        { ar: "المنصور" }
+    // Female First Name Pool
+    const femaleFirsts = [
+        "نور", "ليلى", "زهراء", "آية", "مريم", "أميرة", "سارة", "فاطمة", 
+        "ريم", "جودي", "دانة", "سلمى", "هدى", "لينا", "ياسمين", "زينب", 
+        "جوانا", "ملك", "فريدة", "حبيبة", "سدرة", "روعة", "شهد"
     ];
 
+    // Arabic Last Name Prefixes and Base Roots to dynamically construct unique surnames
+    const surnamePrefixes = ["الـ", "آل ", "بن ", "أبو "];
+    const surnameBases = [
+        "حسن", "نجار", "سيد", "شريف", "ملك", "علي", "منصور", "رشيد", 
+        "فاروق", "قاسم", "هاشم", "طاهر", "حداد", "عزيز", "سليمان", "محمود",
+        "حكيم", "عطاء", "صالح", "جابر", "رمضان", "مختار", "رحيم", "رضوان"
+    ];
+
+    let generatedHistory = new Set();
     let currentGender = 'all';
 
     function setGender(gender, element) {
         currentGender = gender;
         document.querySelectorAll('.btn-filter').forEach(btn => btn.classList.remove('active'));
         element.classList.add('active');
-        generateName();
+        generateUniqueName();
     }
 
-    function generateName() {
-        let filteredFirst = firstNames;
-        if (currentGender !== 'all') {
-            filteredFirst = firstNames.filter(n => n.gender === currentGender);
+    function getRandomItem(array) {
+        return array[Math.floor(Math.random() * array.length)];
+    }
+
+    function buildLastName() {
+        const prefix = getRandomItem(surnamePrefixes);
+        const base = getRandomItem(surnameBases);
+        
+        // Handle proper Arabic spacing
+        if (prefix === "الـ") {
+            return "ال" + base;
+        }
+        return prefix + base;
+    }
+
+    function generateUniqueName() {
+        let attempts = 0;
+        let selectedFirst = "";
+        let selectedLast = "";
+        let fullNameKey = "";
+
+        // Loop to make sure we never repeat a previously shown full name
+        while (attempts < 500) {
+            if (currentGender === 'male') {
+                selectedFirst = getRandomItem(maleFirsts);
+            } else if (currentGender === 'female') {
+                selectedFirst = getRandomItem(femaleFirsts);
+            } else {
+                selectedFirst = getRandomItem([...maleFirsts, ...femaleFirsts]);
+            }
+
+            selectedLast = buildLastName();
+            fullNameKey = `${selectedFirst} ${selectedLast}`;
+
+            if (!generatedHistory.has(fullNameKey)) {
+                generatedHistory.add(fullNameKey);
+                break;
+            }
+            attempts++;
         }
 
-        const randomFirst = filteredFirst[Math.floor(Math.random() * filteredFirst.length)];
-        const randomLast = lastNames[Math.floor(Math.random() * lastNames.length)];
-
-        document.getElementById('firstNameAr').textContent = randomFirst.ar;
-        document.getElementById('lastNameAr').textContent = randomLast.ar;
+        // Display results
+        document.getElementById('firstNameAr').textContent = selectedFirst;
+        document.getElementById('lastNameAr').textContent = selectedLast;
     }
 
-    // Copy single name silently (No Browser Popup)
+    // Silent Copy Function (No Popup Alert)
     function copyText(elementId, btnElement) {
         const textToCopy = document.getElementById(elementId).textContent;
         if (textToCopy === "-") return;
@@ -282,11 +303,11 @@
             setTimeout(() => {
                 btnElement.textContent = originalText;
                 btnElement.classList.remove('copied');
-            }, 1500);
+            }, 1200);
         });
     }
 
-    // Copy Full Name silently (No Browser Popup)
+    // Silent Full Name Copy Function
     function copyFullName(btnElement) {
         const fAr = document.getElementById('firstNameAr').textContent;
         const lAr = document.getElementById('lastNameAr').textContent;
@@ -302,13 +323,13 @@
             setTimeout(() => {
                 btnElement.textContent = originalText;
                 btnElement.classList.remove('copied');
-            }, 1500);
+            }, 1200);
         });
     }
 
-    // Run automatically on load
+    // Run on startup
     window.onload = function() {
-        generateName();
+        generateUniqueName();
     };
 </script>
 
