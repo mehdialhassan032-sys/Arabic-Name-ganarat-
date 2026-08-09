@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arabic Name Generator</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f4f7f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .card {
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+            width: 100%;
+            max-width: 480px;
+            text-align: center;
+        }
+
+        h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .btn-filter {
+            padding: 8px 16px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.2s ease;
+        }
+
+        .btn-filter.active {
+            background: #2c3e50;
+            color: white;
+            border-color: #2c3e50;
+        }
+
+        .display-area {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .name-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #ffffff;
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: 1px solid #cbd5e1;
+        }
+
+        .name-info {
+            text-align: left;
+        }
+
+        .label {
+            font-size: 0.75rem;
+            color: #64748b;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        .text-value {
+            font-size: 1.1rem;
+            color: #1e293b;
+            font-weight: 600;
+        }
+
+        .arabic-val {
+            color: #0f766e;
+            font-size: 1.2rem;
+            margin-left: 6px;
+        }
+
+        .btn-copy-small {
+            background: #e2e8f0;
+            color: #334155;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-copy-small:hover {
+            background: #cbd5e1;
+        }
+
+        .meaning-text {
+            font-size: 0.9rem;
+            color: #64748b;
+            font-style: italic;
+        }
+
+        .action-btns {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            background: #0f766e;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-primary:hover {
+            background: #0d9488;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #64748b;
+            border: 1px solid #cbd5e1;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .btn-secondary:hover {
+            background: #f1f5f9;
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>Arabic Name Generator</h2>
+    
+    <!-- Filter Buttons -->
+    <div class="controls">
+        <button class="btn-filter active" onclick="setGender('all', this)">All</button>
+        <button class="btn-filter" onclick="setGender('male', this)">Male 👨</button>
+        <button class="btn-filter" onclick="setGender('female', this)">Female 👩</button>
+    </div>
+
+    <!-- Display Area -->
+    <div class="display-area">
+        
+        <!-- First Name Row -->
+        <div class="name-row">
+            <div class="name-info">
+                <div class="label">First Name</div>
+                <div class="text-value">
+                    <span id="firstNameEng">-</span>
+                    <span class="arabic-val" id="firstNameAr"></span>
+                </div>
+            </div>
+            <button class="btn-copy-small" onclick="copySingle('firstNameEng', 'firstNameAr')">Copy First</button>
+        </div>
+
+        <!-- Last Name Row -->
+        <div class="name-row">
+            <div class="name-info">
+                <div class="label">Last Name</div>
+                <div class="text-value">
+                    <span id="lastNameEng">-</span>
+                    <span class="arabic-val" id="lastNameAr"></span>
+                </div>
+            </div>
+            <button class="btn-copy-small" onclick="copySingle('lastNameEng', 'lastNameAr')">Copy Last</button>
+        </div>
+
+        <!-- Meaning -->
+        <div class="meaning-text" id="meaningText">Click Generate Name</div>
+    </div>
+
+    <!-- Actions -->
+    <div class="action-btns">
+        <button class="btn-primary" onclick="generateName()">Generate Name</button>
+        <button class="btn-secondary" onclick="copyFullName()">Copy Full Name</button>
+    </div>
+</div>
+
+<script>
+    const firstNames = [
+        // Male
+        { ar: "تَارِق", eng: "Tariq", gender: "male" },
+        { ar: "زَايِد", eng: "Zayd", gender: "male" },
+        { ar: "فَارِس", eng: "Faris", gender: "male" },
+        { ar: "كَرِيم", eng: "Karim", gender: "male" },
+        { ar: "عُمَر", eng: "Omar", gender: "male" },
+        { ar: "أَمِير", eng: "Amir", gender: "male" },
+        // Female
+        { ar: "نُور", eng: "Noor", gender: "female" },
+        { ar: "لَيْلَى", eng: "Layla", gender: "female" },
+        { ar: "زَهْرَاء", eng: "Zahra", gender: "female" },
+        { ar: "آيَة", eng: "Aya", gender: "female" },
+        { ar: "مَرْيَم", eng: "Maryam", gender: "female" },
+        { ar: "أَمِيرَة", eng: "Amira", gender: "female" }
+    ];
+
+    const lastNames = [
+        { ar: "الْمَصْرِي", eng: "Al-Masri", meaning: "The Egyptian" },
+        { ar: "الْحَسَن", eng: "Al-Hassan", meaning: "The Handsome / Good" },
+        { ar: "النَّجَّار", eng: "Al-Najjar", meaning: "The Carpenter" },
+        { ar: "السَّيِّد", eng: "El-Sayed", meaning: "The Master" },
+        { ar: "الشَّرِيف", eng: "Al-Sharif", meaning: "The Noble" },
+        { ar: "الْمَلِك", eng: "Al-Malik", meaning: "The King" }
+    ];
+
+    let currentGender = 'all';
+
+    function setGender(gender, element) {
+        currentGender = gender;
+        document.querySelectorAll('.btn-filter').forEach(btn => btn.classList.remove('active'));
+        element.classList.add('active');
+        generateName();
+    }
+
+    function generateName() {
+        let filteredFirst = firstNames;
+        if (currentGender !== 'all') {
+            filteredFirst = firstNames.filter(n => n.gender === currentGender);
+        }
+
+        const randomFirst = filteredFirst[Math.floor(Math.random() * filteredFirst.length)];
+        const randomLast = lastNames[Math.floor(Math.random() * lastNames.length)];
+
+        document.getElementById('firstNameEng').textContent = randomFirst.eng;
+        document.getElementById('firstNameAr').textContent = `(${randomFirst.ar})`;
+        
+        document.getElementById('lastNameEng').textContent = randomLast.eng;
+        document.getElementById('lastNameAr').textContent = `(${randomLast.ar})`;
+
+        document.getElementById('meaningText').textContent = `Meaning: "${randomLast.meaning}"`;
+    }
+
+    function copySingle(engId, arId) {
+        const eng = document.getElementById(engId).textContent;
+        const ar = document.getElementById(arId).textContent;
+
+        if (eng === "-") return;
+
+        const textToCopy = `${eng} ${ar}`;
+        navigator.clipboard.writeText(textToCopy).then(() => {
+            alert(`Copied: ${textToCopy}`);
+        });
+    }
+
+    function copyFullName() {
+        const fEng = document.getElementById('firstNameEng').textContent;
+        const fAr = document.getElementById('firstNameAr').textContent;
+        const lEng = document.getElementById('lastNameEng').textContent;
+        const lAr = document.getElementById('lastNameAr').textContent;
+
+        if (fEng === "-") return;
+
+        const fullName = `${fEng} ${lEng} ${fAr} ${lAr}`;
+        navigator.clipboard.writeText(fullName).then(() => {
+            alert(`Copied Full Name: ${fullName}`);
+        });
+    }
+
+    // Run automatically when loaded
+    window.onload = function() {
+        generateName();
+    };
+</script>
+
+</body>
+</html>
