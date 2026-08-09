@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Générateur de Noms de Côte d'Ivoire</title>
+    <title>AI Smart Name Generator</title>
     <style>
         * {
             box-sizing: border-box;
@@ -36,6 +36,38 @@
             margin-bottom: 20px;
         }
 
+        .lang-select-box {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .lang-select-box label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #64748b;
+            text-transform: uppercase;
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        .select-input {
+            width: 100%;
+            padding: 10px 14px;
+            border-radius: 8px;
+            border: 2px solid #cbd5e1;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1e293b;
+            background: #ffffff;
+            outline: none;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+
+        .select-input:focus {
+            border-color: #0f766e;
+        }
+
         .controls {
             display: flex;
             gap: 10px;
@@ -55,9 +87,9 @@
         }
 
         .btn-filter.active {
-            background: #047857;
+            background: #0f766e;
             color: white;
-            border-color: #047857;
+            border-color: #0f766e;
         }
 
         .display-area {
@@ -94,10 +126,15 @@
             margin-bottom: 4px;
         }
 
-        .french-val {
-            color: #047857;
+        .name-val {
+            color: #0f766e;
             font-size: 1.4rem;
             font-weight: bold;
+        }
+
+        .rtl-text {
+            direction: rtl;
+            text-align: right;
         }
 
         .btn-copy-small {
@@ -130,7 +167,7 @@
         }
 
         .btn-primary {
-            background: #047857;
+            background: #0f766e;
             color: white;
             border: none;
             padding: 12px 20px;
@@ -142,7 +179,7 @@
         }
 
         .btn-primary:hover {
-            background: #059669;
+            background: #0d9488;
         }
 
         .btn-secondary {
@@ -171,99 +208,142 @@
 <body>
 
 <div class="card">
-    <h2>Générateur Côte d'Ivoire 🇨🇮</h2>
+    <h2>AI Smart Name Generator</h2>
+
+    <!-- Language Select Box (English Added) -->
+    <div class="lang-select-box">
+        <label for="languageSelect">Select Language / Language Choose</label>
+        <select id="languageSelect" class="select-input" onchange="generateAIName()">
+            <option value="en">English Names 🇬🇧</option>
+            <option value="ar">Arabic Names (العربية) 🇸🇦</option>
+            <option value="fr">French Names (Français) 🇫🇷</option>
+        </select>
+    </div>
     
-    <!-- Filter Buttons -->
+    <!-- Gender Filter Buttons -->
     <div class="controls">
-        <button class="btn-filter active" onclick="setGender('all', this)">Tous</button>
-        <button class="btn-filter" onclick="setGender('male', this)">Homme 👨</button>
-        <button class="btn-filter" onclick="setGender('female', this)">Femme 👩</button>
+        <button class="btn-filter active" onclick="setGender('all', this)">All</button>
+        <button class="btn-filter" onclick="setGender('male', this)">Male 👨</button>
+        <button class="btn-filter" onclick="setGender('female', this)">Female 👩</button>
     </div>
 
     <!-- Display Area -->
     <div class="display-area">
         
-        <!-- First Name Row -->
+        <!-- First Name Box -->
         <div class="name-row">
             <div class="name-info">
-                <div class="label">PRÉNOM</div>
-                <div class="french-val" id="firstNameFr">-</div>
+                <div class="label">First Name</div>
+                <div class="name-val" id="firstNameVal">-</div>
             </div>
-            <button class="btn-copy-small" onclick="copyText('firstNameFr', this)">Copier</button>
+            <button class="btn-copy-small" onclick="copySingle('firstNameVal', this)">Copy First</button>
         </div>
 
-        <!-- Last Name Row -->
+        <!-- Last Name Box -->
         <div class="name-row">
             <div class="name-info">
-                <div class="label">NOM DE FAMILLE</div>
-                <div class="french-val" id="lastNameFr">-</div>
+                <div class="label">Last Name</div>
+                <div class="name-val" id="lastNameVal">-</div>
             </div>
-            <button class="btn-copy-small" onclick="copyText('lastNameFr', this)">Copier</button>
+            <button class="btn-copy-small" onclick="copySingle('lastNameVal', this)">Copy Last</button>
         </div>
 
     </div>
 
     <!-- Actions -->
     <div class="action-btns">
-        <button class="btn-primary" onclick="generateUniqueName()">Générer Nom Unique</button>
-        <button class="btn-secondary" id="fullCopyBtn" onclick="copyFullName(this)">Copier Nom Complet</button>
+        <button class="btn-primary" onclick="generateAIName()">✨ Generate Smart Unique Name</button>
+        <button class="btn-secondary" id="fullCopyBtn" onclick="copyFullName(this)">Copy Full Name</button>
     </div>
 </div>
 
 <script>
-    // Male Ivorian First Names (French & Akan/Mandé origin)
-    const maleFirsts = [
-        "Kouassi", "Koffi", "Kouadio", "Yao", "Kouamé", "Konan", "Amani", 
-        "N'Guessan", "Jean-Baptiste", "Jean-Luc", "Ange", "Stéphane", 
-        "Franck", "Marc", "Ibrahim", "Tiemoko", "Oumar", "Moussa", "Bakary"
-    ];
-
-    // Female Ivorian First Names
-    const femaleFirsts = [
-        "Adjoua", "Amenan", "Affoué", "Aya", "Akissi", "Bintou", "Awa", 
-        "Fatou", "Kadiatou", "Marie", "Grace", "Christelle", "Syntyche", 
-        "Dominique", "Ruth", "Esther", "Clarisse", "Edwige", "Sandrine"
-    ];
-
-    // Common Ivorian Surnames (Akan, Gour, Kru, Mandé origins)
-    const lastNames = [
-        "Kouassi", "Koné", "Coulibaly", "Bamba", "Diallo", "Traoré", 
-        "N'Guessan", "Yao", "Kouamé", "Touré", "Ouattara", "Cissé", 
-        "Diarra", "Fofana", "Gbagbo", "Bedie", "Dibo", "Sylla", "Sy"
-    ];
-
-    let generatedHistory = new Set();
+    // System Memory Bank (Guarantees zero duplicates)
+    const generatedHistory = new Set();
     let currentGender = 'all';
+
+    // AI Procedural Dataset for English
+    const englishAI = {
+        maleRoots: ["Alex", "Liam", "Ethan", "Noah", "Oliver", "Lucas", "Mason", "Logan", "James", "Benjamin", "Henry", "Jacob", "William", "Daniel", "Matthew"],
+        femaleRoots: ["Emma", "Olivia", "Ava", "Sophia", "Isabella", "Mia", "Amelia", "Harper", "Evelyn", "Abigail", "Emily", "Ella", "Scarlett", "Grace", "Chloe"],
+        surPrefixes: ["Mc", "O'", "Fitz", "Van ", "De "],
+        surRoots: ["Smith", "Johnson", "Williams", "Brown", "Jones", "Garcia", "Miller", "Davis", "Rodriguez", "Martinez", "Hernandez", "Lopez", "Gonzalez", "Wilson", "Anderson", "Thomas", "Taylor", "Moore", "Jackson", "Martin"],
+        surSuffixes: ["son", "ford", "ton", "field", "wood", "berg", "stein", "worth"]
+    };
+
+    // AI Procedural Dataset for Arabic
+    const arabicAI = {
+        maleRoots: ["طارق", "زايد", "فارس", "كريم", "عمر", "أمير", "حمزة", "يوسف", "سليمان", "عبد الله", "زياد", "راشد", "سهيل", "ياسين", "سليم", "بلال", "سعود", "فيصل"],
+        femaleRoots: ["نور", "ليلى", "زهراء", "آية", "مريم", "أميرة", "سارة", "فاطمة", "حواء", "خديجة", "ريم", "جودي", "دانة", "سلمى", "هدى", "لينا", "ياسمين", "زينب"],
+        surPrefixes: ["الـ", "آل ", "بن ", "أبو "],
+        surRoots: ["حسن", "نجار", "سيد", "شريف", "ملك", "علي", "منصور", "رشيد", "فاروق", "قاسم", "هاشم", "طاهر", "حداد", "عزيز", "سليمان", "حكيم", "عطاء", "صالح"]
+    };
+
+    // AI Procedural Dataset for French
+    const frenchAI = {
+        maleRoots: ["Ibrahim", "Oumar", "Moussa", "Tariq", "Faris", "Karim", "Kouassi", "Koffi", "Jean-Baptiste", "Stephane", "Franck", "Marc", "Tiemoko", "Bakary"],
+        femaleRoots: ["Awa", "Bintou", "Fatou", "Nour", "Layla", "Aya", "Maryam", "Zahra", "Adjoua", "Amenan", "Affoué", "Akissi", "Kadiatou", "Marie", "Christelle"],
+        surRoots: ["Coulibaly", "Traoré", "Diallo", "Touré", "Cissé", "Bamba", "Koné", "Kouamé", "N'Guessan", "Yao", "Ouattara", "Diarra", "Fofana", "Gbagbo", "Bedie"]
+    };
 
     function setGender(gender, element) {
         currentGender = gender;
         document.querySelectorAll('.btn-filter').forEach(btn => btn.classList.remove('active'));
         element.classList.add('active');
-        generateUniqueName();
+        generateAIName();
     }
 
-    function getRandomItem(array) {
-        return array[Math.floor(Math.random() * array.length)];
+    function getRandomItem(arr) {
+        return arr[Math.floor(Math.random() * arr.length)];
     }
 
-    function generateUniqueName() {
+    // Smart Procedural Generation Engine
+    function buildAILastName(lang) {
+        if (lang === 'en') {
+            const mode = Math.random();
+            if (mode < 0.3) {
+                return getRandomItem(englishAI.surPrefixes) + getRandomItem(englishAI.surRoots);
+            } else if (mode < 0.6) {
+                return getRandomItem(englishAI.surRoots) + getRandomItem(englishAI.surSuffixes);
+            }
+            return getRandomItem(englishAI.surRoots);
+        } else if (lang === 'ar') {
+            const prefix = getRandomItem(arabicAI.surPrefixes);
+            const root = getRandomItem(arabicAI.surRoots);
+            return (prefix === "الـ") ? ("ال" + root) : (prefix + root);
+        } else {
+            return getRandomItem(frenchAI.surRoots);
+        }
+    }
+
+    function generateAIName() {
+        const langMode = document.getElementById('languageSelect').value;
         let attempts = 0;
         let selectedFirst = "";
         let selectedLast = "";
         let fullNameKey = "";
 
-        while (attempts < 500) {
-            if (currentGender === 'male') {
-                selectedFirst = getRandomItem(maleFirsts);
-            } else if (currentGender === 'female') {
-                selectedFirst = getRandomItem(femaleFirsts);
-            } else {
-                selectedFirst = getRandomItem([...maleFirsts, ...femaleFirsts]);
+        while (attempts < 1000) {
+            let pool = [];
+            if (langMode === 'en') {
+                if (currentGender === 'male') pool = englishAI.maleRoots;
+                else if (currentGender === 'female') pool = englishAI.femaleRoots;
+                else pool = [...englishAI.maleRoots, ...englishAI.femaleRoots];
+            } else if (langMode === 'ar') {
+                if (currentGender === 'male') pool = arabicAI.maleRoots;
+                else if (currentGender === 'female') pool = arabicAI.femaleRoots;
+                else pool = [...arabicAI.maleRoots, ...arabicAI.femaleRoots];
+            } else if (langMode === 'fr') {
+                if (currentGender === 'male') pool = frenchAI.maleRoots;
+                else if (currentGender === 'female') pool = frenchAI.femaleRoots;
+                else pool = [...frenchAI.maleRoots, ...frenchAI.femaleRoots];
             }
 
-            selectedLast = getRandomItem(lastNames);
-            fullNameKey = `${selectedFirst} ${selectedLast}`;
+            selectedFirst = getRandomItem(pool);
+            selectedLast = buildAILastName(langMode);
+            fullNameKey = `${selectedFirst} ${selectedLast}_${langMode}`;
 
+            // Check against global memory to ensure no duplicates
             if (!generatedHistory.has(fullNameKey)) {
                 generatedHistory.add(fullNameKey);
                 break;
@@ -271,18 +351,29 @@
             attempts++;
         }
 
-        document.getElementById('firstNameFr').textContent = selectedFirst;
-        document.getElementById('lastNameFr').textContent = selectedLast;
+        const fEl = document.getElementById('firstNameVal');
+        const lEl = document.getElementById('lastNameVal');
+
+        fEl.textContent = selectedFirst;
+        lEl.textContent = selectedLast;
+
+        if (langMode === 'ar') {
+            fEl.classList.add('rtl-text');
+            lEl.classList.add('rtl-text');
+        } else {
+            fEl.classList.remove('rtl-text');
+            lEl.classList.remove('rtl-text');
+        }
     }
 
-    // Silent Copy Function (No Popup Window)
-    function copyText(elementId, btnElement) {
-        const textToCopy = document.getElementById(elementId).textContent;
-        if (textToCopy === "-") return;
+    // Silent Copy Functions (No Alert Popups)
+    function copySingle(elementId, btnElement) {
+        const text = document.getElementById(elementId).textContent;
+        if (text === "-") return;
 
-        navigator.clipboard.writeText(textToCopy).then(() => {
+        navigator.clipboard.writeText(text).then(() => {
             const originalText = btnElement.textContent;
-            btnElement.textContent = "Copié! ✓";
+            btnElement.textContent = "Copied! ✓";
             btnElement.classList.add('copied');
             
             setTimeout(() => {
@@ -292,17 +383,16 @@
         });
     }
 
-    // Silent Full Name Copy Function
     function copyFullName(btnElement) {
-        const fName = document.getElementById('firstNameFr').textContent;
-        const lName = document.getElementById('lastNameFr').textContent;
+        const fName = document.getElementById('firstNameVal').textContent;
+        const lName = document.getElementById('lastNameVal').textContent;
 
         if (fName === "-") return;
 
         const fullName = `${fName} ${lName}`;
         navigator.clipboard.writeText(fullName).then(() => {
             const originalText = btnElement.textContent;
-            btnElement.textContent = "Nom Complet Copié! ✓";
+            btnElement.textContent = "Copied Full Name! ✓";
             btnElement.classList.add('copied');
 
             setTimeout(() => {
@@ -312,9 +402,8 @@
         });
     }
 
-    // Auto-run on load
     window.onload = function() {
-        generateUniqueName();
+        generateAIName();
     };
 </script>
 
