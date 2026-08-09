@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -29,6 +29,7 @@
             width: 100%;
             max-width: 480px;
             text-align: center;
+            position: relative;
         }
 
         h2 {
@@ -76,13 +77,14 @@
             justify-content: space-between;
             align-items: center;
             background: #ffffff;
-            padding: 10px 15px;
+            padding: 12px 15px;
             border-radius: 8px;
             border: 1px solid #cbd5e1;
         }
 
         .name-info {
-            text-align: left;
+            text-align: right;
+            width: 100%;
         }
 
         .label {
@@ -90,40 +92,37 @@
             color: #64748b;
             text-transform: uppercase;
             font-weight: 700;
-        }
-
-        .text-value {
-            font-size: 1.1rem;
-            color: #1e293b;
-            font-weight: 600;
+            margin-bottom: 4px;
         }
 
         .arabic-val {
             color: #0f766e;
-            font-size: 1.2rem;
-            margin-left: 6px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            direction: rtl;
         }
 
         .btn-copy-small {
             background: #e2e8f0;
             color: #334155;
             border: none;
-            padding: 6px 12px;
+            padding: 8px 14px;
             border-radius: 6px;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             font-weight: 600;
             cursor: pointer;
-            transition: background 0.2s;
+            transition: all 0.2s;
+            white-space: nowrap;
+            margin-right: 10px;
         }
 
         .btn-copy-small:hover {
             background: #cbd5e1;
         }
 
-        .meaning-text {
-            font-size: 0.9rem;
-            color: #64748b;
-            font-style: italic;
+        .btn-copy-small.copied {
+            background: #10b981;
+            color: white;
         }
 
         .action-btns {
@@ -157,10 +156,17 @@
             cursor: pointer;
             font-size: 0.9rem;
             font-weight: 600;
+            transition: all 0.2s;
         }
 
         .btn-secondary:hover {
             background: #f1f5f9;
+        }
+
+        .btn-secondary.copied {
+            background: #10b981;
+            color: white;
+            border-color: #10b981;
         }
     </style>
 </head>
@@ -181,64 +187,64 @@
         
         <!-- First Name Row -->
         <div class="name-row">
+            <button class="btn-copy-small" onclick="copyText('firstNameAr', this)">Copy First</button>
             <div class="name-info">
-                <div class="label">First Name</div>
-                <div class="text-value">
-                    <span id="firstNameEng">-</span>
-                    <span class="arabic-val" id="firstNameAr"></span>
-                </div>
+                <div class="label">FIRST NAME</div>
+                <div class="arabic-val" id="firstNameAr">-</div>
             </div>
-            <button class="btn-copy-small" onclick="copySingle('firstNameEng', 'firstNameAr')">Copy First</button>
         </div>
 
         <!-- Last Name Row -->
         <div class="name-row">
+            <button class="btn-copy-small" onclick="copyText('lastNameAr', this)">Copy Last</button>
             <div class="name-info">
-                <div class="label">Last Name</div>
-                <div class="text-value">
-                    <span id="lastNameEng">-</span>
-                    <span class="arabic-val" id="lastNameAr"></span>
-                </div>
+                <div class="label">LAST NAME</div>
+                <div class="arabic-val" id="lastNameAr">-</div>
             </div>
-            <button class="btn-copy-small" onclick="copySingle('lastNameEng', 'lastNameAr')">Copy Last</button>
         </div>
 
-        <!-- Meaning -->
-        <div class="meaning-text" id="meaningText">Click Generate Name</div>
     </div>
 
     <!-- Actions -->
     <div class="action-btns">
         <button class="btn-primary" onclick="generateName()">Generate Name</button>
-        <button class="btn-secondary" onclick="copyFullName()">Copy Full Name</button>
+        <button class="btn-secondary" id="fullCopyBtn" onclick="copyFullName(this)">Copy Full Name</button>
     </div>
 </div>
 
 <script>
+    // Pure Arabic First Names
     const firstNames = [
         // Male
-        { ar: "تَارِق", eng: "Tariq", gender: "male" },
-        { ar: "زَايِد", eng: "Zayd", gender: "male" },
-        { ar: "فَارِس", eng: "Faris", gender: "male" },
-        { ar: "كَرِيم", eng: "Karim", gender: "male" },
-        { ar: "عُمَر", eng: "Omar", gender: "male" },
-        { ar: "أَمِير", eng: "Amir", gender: "male" },
+        { ar: "طارق", gender: "male" },
+        { ar: "زايد", gender: "male" },
+        { ar: "فارس", gender: "male" },
+        { ar: "كريم", gender: "male" },
+        { ar: "عمر", gender: "male" },
+        { ar: "أمير", gender: "male" },
+        { ar: "حمزة", gender: "male" },
+        { ar: "يوسف", gender: "male" },
         // Female
-        { ar: "نُور", eng: "Noor", gender: "female" },
-        { ar: "لَيْلَى", eng: "Layla", gender: "female" },
-        { ar: "زَهْرَاء", eng: "Zahra", gender: "female" },
-        { ar: "آيَة", eng: "Aya", gender: "female" },
-        { ar: "مَرْيَم", eng: "Maryam", gender: "female" },
-        { ar: "أَمِيرَة", eng: "Amira", gender: "female" }
+        { ar: "نور", gender: "female" },
+        { ar: "ليلى", gender: "female" },
+        { ar: "زهراء", gender: "female" },
+        { ar: "آية", gender: "female" },
+        { ar: "مريم", gender: "female" },
+        { ar: "أميرة", gender: "female" },
+        { ar: "سارة", gender: "female" },
+        { ar: "فاطمة", gender: "female" }
     ];
 
+    // Pure Arabic Last Names
     const lastNames = [
-        { ar: "الْمَصْرِي", eng: "Al-Masri", meaning: "The Egyptian" },
-        { ar: "الْحَسَن", eng: "Al-Hassan", meaning: "The Handsome / Good" },
-        { ar: "النَّجَّار", eng: "Al-Najjar", meaning: "The Carpenter" },
-        { ar: "السَّيِّد", eng: "El-Sayed", meaning: "The Master" },
-        { ar: "الشَّرِيف", eng: "Al-Sharif", meaning: "The Noble" },
-        { ar: "الْمَلِك", eng: "Al-Malik", meaning: "The King" }
+        { ar: "المصري" },
+        { ar: "الحسن" },
+        { ar: "النجار" },
+        { ar: "السيّد" },
+        { ar: "الشريف" },
+        { ar: "الملك" },
+        { ar: "العلي" },
+        { ar: "المنصور" }
     ];
 
     let currentGender = 'all';
@@ -259,42 +265,48 @@
         const randomFirst = filteredFirst[Math.floor(Math.random() * filteredFirst.length)];
         const randomLast = lastNames[Math.floor(Math.random() * lastNames.length)];
 
-        document.getElementById('firstNameEng').textContent = randomFirst.eng;
-        document.getElementById('firstNameAr').textContent = `(${randomFirst.ar})`;
-        
-        document.getElementById('lastNameEng').textContent = randomLast.eng;
-        document.getElementById('lastNameAr').textContent = `(${randomLast.ar})`;
-
-        document.getElementById('meaningText').textContent = `Meaning: "${randomLast.meaning}"`;
+        document.getElementById('firstNameAr').textContent = randomFirst.ar;
+        document.getElementById('lastNameAr').textContent = randomLast.ar;
     }
 
-    function copySingle(engId, arId) {
-        const eng = document.getElementById(engId).textContent;
-        const ar = document.getElementById(arId).textContent;
+    // Copy single name silently (No Browser Popup)
+    function copyText(elementId, btnElement) {
+        const textToCopy = document.getElementById(elementId).textContent;
+        if (textToCopy === "-") return;
 
-        if (eng === "-") return;
-
-        const textToCopy = `${eng} ${ar}`;
         navigator.clipboard.writeText(textToCopy).then(() => {
-            alert(`Copied: ${textToCopy}`);
+            const originalText = btnElement.textContent;
+            btnElement.textContent = "Copied! ✓";
+            btnElement.classList.add('copied');
+            
+            setTimeout(() => {
+                btnElement.textContent = originalText;
+                btnElement.classList.remove('copied');
+            }, 1500);
         });
     }
 
-    function copyFullName() {
-        const fEng = document.getElementById('firstNameEng').textContent;
+    // Copy Full Name silently (No Browser Popup)
+    function copyFullName(btnElement) {
         const fAr = document.getElementById('firstNameAr').textContent;
-        const lEng = document.getElementById('lastNameEng').textContent;
         const lAr = document.getElementById('lastNameAr').textContent;
 
-        if (fEng === "-") return;
+        if (fAr === "-") return;
 
-        const fullName = `${fEng} ${lEng} ${fAr} ${lAr}`;
+        const fullName = `${fAr} ${lAr}`;
         navigator.clipboard.writeText(fullName).then(() => {
-            alert(`Copied Full Name: ${fullName}`);
+            const originalText = btnElement.textContent;
+            btnElement.textContent = "Copied Full Name! ✓";
+            btnElement.classList.add('copied');
+
+            setTimeout(() => {
+                btnElement.textContent = originalText;
+                btnElement.classList.remove('copied');
+            }, 1500);
         });
     }
 
-    // Run automatically when loaded
+    // Run automatically on load
     window.onload = function() {
         generateName();
     };
