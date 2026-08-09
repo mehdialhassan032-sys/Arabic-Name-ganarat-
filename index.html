@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Unique Arabic Name Generator</title>
+    <title>Générateur de Noms de Côte d'Ivoire</title>
     <style>
         * {
             box-sizing: border-box;
@@ -32,7 +32,7 @@
         }
 
         h2 {
-            color: #2c3e50;
+            color: #1e293b;
             margin-bottom: 20px;
         }
 
@@ -55,9 +55,9 @@
         }
 
         .btn-filter.active {
-            background: #2c3e50;
+            background: #047857;
             color: white;
-            border-color: #2c3e50;
+            border-color: #047857;
         }
 
         .display-area {
@@ -82,7 +82,7 @@
         }
 
         .name-info {
-            text-align: right;
+            text-align: left;
             width: 100%;
         }
 
@@ -94,11 +94,10 @@
             margin-bottom: 4px;
         }
 
-        .arabic-val {
-            color: #0f766e;
-            font-size: 1.5rem;
+        .french-val {
+            color: #047857;
+            font-size: 1.4rem;
             font-weight: bold;
-            direction: rtl;
         }
 
         .btn-copy-small {
@@ -112,7 +111,7 @@
             cursor: pointer;
             transition: all 0.2s;
             white-space: nowrap;
-            margin-right: 10px;
+            margin-left: 10px;
         }
 
         .btn-copy-small:hover {
@@ -131,7 +130,7 @@
         }
 
         .btn-primary {
-            background: #0f766e;
+            background: #047857;
             color: white;
             border: none;
             padding: 12px 20px;
@@ -143,7 +142,7 @@
         }
 
         .btn-primary:hover {
-            background: #0d9488;
+            background: #059669;
         }
 
         .btn-secondary {
@@ -172,13 +171,13 @@
 <body>
 
 <div class="card">
-    <h2>Arabic Name Generator</h2>
+    <h2>Générateur Côte d'Ivoire 🇨🇮</h2>
     
     <!-- Filter Buttons -->
     <div class="controls">
-        <button class="btn-filter active" onclick="setGender('all', this)">All</button>
-        <button class="btn-filter" onclick="setGender('male', this)">Male 👨</button>
-        <button class="btn-filter" onclick="setGender('female', this)">Female 👩</button>
+        <button class="btn-filter active" onclick="setGender('all', this)">Tous</button>
+        <button class="btn-filter" onclick="setGender('male', this)">Homme 👨</button>
+        <button class="btn-filter" onclick="setGender('female', this)">Femme 👩</button>
     </div>
 
     <!-- Display Area -->
@@ -186,52 +185,51 @@
         
         <!-- First Name Row -->
         <div class="name-row">
-            <button class="btn-copy-small" onclick="copyText('firstNameAr', this)">Copy First</button>
             <div class="name-info">
-                <div class="label">FIRST NAME</div>
-                <div class="arabic-val" id="firstNameAr">-</div>
+                <div class="label">PRÉNOM</div>
+                <div class="french-val" id="firstNameFr">-</div>
             </div>
+            <button class="btn-copy-small" onclick="copyText('firstNameFr', this)">Copier</button>
         </div>
 
         <!-- Last Name Row -->
         <div class="name-row">
-            <button class="btn-copy-small" onclick="copyText('lastNameAr', this)">Copy Last</button>
             <div class="name-info">
-                <div class="label">LAST NAME</div>
-                <div class="arabic-val" id="lastNameAr">-</div>
+                <div class="label">NOM DE FAMILLE</div>
+                <div class="french-val" id="lastNameFr">-</div>
             </div>
+            <button class="btn-copy-small" onclick="copyText('lastNameFr', this)">Copier</button>
         </div>
 
     </div>
 
     <!-- Actions -->
     <div class="action-btns">
-        <button class="btn-primary" onclick="generateUniqueName()">Generate Unique Name</button>
-        <button class="btn-secondary" id="fullCopyBtn" onclick="copyFullName(this)">Copy Full Name</button>
+        <button class="btn-primary" onclick="generateUniqueName()">Générer Nom Unique</button>
+        <button class="btn-secondary" id="fullCopyBtn" onclick="copyFullName(this)">Copier Nom Complet</button>
     </div>
 </div>
 
 <script>
-    // Male First Name Pool
+    // Male Ivorian First Names (French & Akan/Mandé origin)
     const maleFirsts = [
-        "طارق", "زايد", "فارس", "كريم", "عمر", "أمير", "حمزة", "يوسف", 
-        "عبد الله", "عبد الرحمن", "سيف", "بدر", "أحمد", "محمود", "زياد", 
-        "راشد", "سعود", "فيصل", "خالد", "سهيل", "ياسين", "سليم", "بلال"
+        "Kouassi", "Koffi", "Kouadio", "Yao", "Kouamé", "Konan", "Amani", 
+        "N'Guessan", "Jean-Baptiste", "Jean-Luc", "Ange", "Stéphane", 
+        "Franck", "Marc", "Ibrahim", "Tiemoko", "Oumar", "Moussa", "Bakary"
     ];
 
-    // Female First Name Pool
+    // Female Ivorian First Names
     const femaleFirsts = [
-        "نور", "ليلى", "زهراء", "آية", "مريم", "أميرة", "سارة", "فاطمة", 
-        "ريم", "جودي", "دانة", "سلمى", "هدى", "لينا", "ياسمين", "زينب", 
-        "جوانا", "ملك", "فريدة", "حبيبة", "سدرة", "روعة", "شهد"
+        "Adjoua", "Amenan", "Affoué", "Aya", "Akissi", "Bintou", "Awa", 
+        "Fatou", "Kadiatou", "Marie", "Grace", "Christelle", "Syntyche", 
+        "Dominique", "Ruth", "Esther", "Clarisse", "Edwige", "Sandrine"
     ];
 
-    // Arabic Last Name Prefixes and Base Roots to dynamically construct unique surnames
-    const surnamePrefixes = ["الـ", "آل ", "بن ", "أبو "];
-    const surnameBases = [
-        "حسن", "نجار", "سيد", "شريف", "ملك", "علي", "منصور", "رشيد", 
-        "فاروق", "قاسم", "هاشم", "طاهر", "حداد", "عزيز", "سليمان", "محمود",
-        "حكيم", "عطاء", "صالح", "جابر", "رمضان", "مختار", "رحيم", "رضوان"
+    // Common Ivorian Surnames (Akan, Gour, Kru, Mandé origins)
+    const lastNames = [
+        "Kouassi", "Koné", "Coulibaly", "Bamba", "Diallo", "Traoré", 
+        "N'Guessan", "Yao", "Kouamé", "Touré", "Ouattara", "Cissé", 
+        "Diarra", "Fofana", "Gbagbo", "Bedie", "Dibo", "Sylla", "Sy"
     ];
 
     let generatedHistory = new Set();
@@ -248,24 +246,12 @@
         return array[Math.floor(Math.random() * array.length)];
     }
 
-    function buildLastName() {
-        const prefix = getRandomItem(surnamePrefixes);
-        const base = getRandomItem(surnameBases);
-        
-        // Handle proper Arabic spacing
-        if (prefix === "الـ") {
-            return "ال" + base;
-        }
-        return prefix + base;
-    }
-
     function generateUniqueName() {
         let attempts = 0;
         let selectedFirst = "";
         let selectedLast = "";
         let fullNameKey = "";
 
-        // Loop to make sure we never repeat a previously shown full name
         while (attempts < 500) {
             if (currentGender === 'male') {
                 selectedFirst = getRandomItem(maleFirsts);
@@ -275,7 +261,7 @@
                 selectedFirst = getRandomItem([...maleFirsts, ...femaleFirsts]);
             }
 
-            selectedLast = buildLastName();
+            selectedLast = getRandomItem(lastNames);
             fullNameKey = `${selectedFirst} ${selectedLast}`;
 
             if (!generatedHistory.has(fullNameKey)) {
@@ -285,19 +271,18 @@
             attempts++;
         }
 
-        // Display results
-        document.getElementById('firstNameAr').textContent = selectedFirst;
-        document.getElementById('lastNameAr').textContent = selectedLast;
+        document.getElementById('firstNameFr').textContent = selectedFirst;
+        document.getElementById('lastNameFr').textContent = selectedLast;
     }
 
-    // Silent Copy Function (No Popup Alert)
+    // Silent Copy Function (No Popup Window)
     function copyText(elementId, btnElement) {
         const textToCopy = document.getElementById(elementId).textContent;
         if (textToCopy === "-") return;
 
         navigator.clipboard.writeText(textToCopy).then(() => {
             const originalText = btnElement.textContent;
-            btnElement.textContent = "Copied! ✓";
+            btnElement.textContent = "Copié! ✓";
             btnElement.classList.add('copied');
             
             setTimeout(() => {
@@ -309,15 +294,15 @@
 
     // Silent Full Name Copy Function
     function copyFullName(btnElement) {
-        const fAr = document.getElementById('firstNameAr').textContent;
-        const lAr = document.getElementById('lastNameAr').textContent;
+        const fName = document.getElementById('firstNameFr').textContent;
+        const lName = document.getElementById('lastNameFr').textContent;
 
-        if (fAr === "-") return;
+        if (fName === "-") return;
 
-        const fullName = `${fAr} ${lAr}`;
+        const fullName = `${fName} ${lName}`;
         navigator.clipboard.writeText(fullName).then(() => {
             const originalText = btnElement.textContent;
-            btnElement.textContent = "Copied Full Name! ✓";
+            btnElement.textContent = "Nom Complet Copié! ✓";
             btnElement.classList.add('copied');
 
             setTimeout(() => {
@@ -327,7 +312,7 @@
         });
     }
 
-    // Run on startup
+    // Auto-run on load
     window.onload = function() {
         generateUniqueName();
     };
