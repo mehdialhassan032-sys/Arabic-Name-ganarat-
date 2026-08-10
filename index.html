@@ -258,7 +258,7 @@
 </div>
 
 <script>
-    // System History Memory
+    // Global History Set
     const generatedHistory = new Set();
     let currentGender = 'all';
 
@@ -313,11 +313,19 @@
     function generateAIName(isUserClick = false) {
         const langMode = document.getElementById('languageSelect').value;
 
-        // If app reopens and user didn't request a new name, restore saved name
+        // Restore saved name from localStorage if page reloaded automatically
         if (!isUserClick) {
-            const savedState = sessionStorage.getItem('saved_name_state');
+            const savedState = localStorage.getItem('ai_name_state_lock');
             if (savedState) {
                 const data = JSON.parse(savedState);
+                document.getElementById('languageSelect').value = data.lang;
+                currentGender = data.gender || 'all';
+                
+                // Update gender button UI
+                document.querySelectorAll('.btn-filter').forEach(btn => btn.classList.remove('active'));
+                const activeBtn = document.getElementById(`btn-${currentGender}`);
+                if (activeBtn) activeBtn.classList.add('active');
+
                 applyNameToUI(data.first, data.last, data.lang);
                 return;
             }
@@ -345,8 +353,8 @@
             attempts++;
         }
 
-        // Save state to sessionStorage
-        sessionStorage.setItem('saved_name_state', JSON.stringify({
+        // Store state using persistent localStorage
+        localStorage.setItem('ai_name_state_lock', JSON.stringify({
             first: selectedFirst,
             last: selectedLast,
             lang: langMode,
@@ -372,7 +380,7 @@
         }
     }
 
-    // Silent Copy Functions
+    // Copy Functions
     function copySingle(elementId, btnElement) {
         const text = document.getElementById(elementId).textContent;
         if (text === "-") return;
