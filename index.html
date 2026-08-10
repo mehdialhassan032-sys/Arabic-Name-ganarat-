@@ -210,10 +210,10 @@
 <div class="card">
     <h2>AI Smart Name Generator</h2>
 
-    <!-- Language Select Box (English Added) -->
+    <!-- Language Selector -->
     <div class="lang-select-box">
         <label for="languageSelect">Select Language / Language Choose</label>
-        <select id="languageSelect" class="select-input" onchange="generateAIName()">
+        <select id="languageSelect" class="select-input" onchange="generateAIName(true)">
             <option value="en">English Names 🇬🇧</option>
             <option value="ar">Arabic Names (العربية) 🇸🇦</option>
             <option value="fr">French Names (Français) 🇫🇷</option>
@@ -222,15 +222,15 @@
     
     <!-- Gender Filter Buttons -->
     <div class="controls">
-        <button class="btn-filter active" onclick="setGender('all', this)">All</button>
-        <button class="btn-filter" onclick="setGender('male', this)">Male 👨</button>
-        <button class="btn-filter" onclick="setGender('female', this)">Female 👩</button>
+        <button class="btn-filter active" id="btn-all" onclick="setGender('all', this)">All</button>
+        <button class="btn-filter" id="btn-male" onclick="setGender('male', this)">Male 👨</button>
+        <button class="btn-filter" id="btn-female" onclick="setGender('female', this)">Female 👩</button>
     </div>
 
     <!-- Display Area -->
     <div class="display-area">
         
-        <!-- First Name Box -->
+        <!-- First Name Row -->
         <div class="name-row">
             <div class="name-info">
                 <div class="label">First Name</div>
@@ -239,7 +239,7 @@
             <button class="btn-copy-small" onclick="copySingle('firstNameVal', this)">Copy First</button>
         </div>
 
-        <!-- Last Name Box -->
+        <!-- Last Name Row -->
         <div class="name-row">
             <div class="name-info">
                 <div class="label">Last Name</div>
@@ -250,19 +250,19 @@
 
     </div>
 
-    <!-- Actions -->
+    <!-- Action Buttons -->
     <div class="action-btns">
-        <button class="btn-primary" onclick="generateAIName()">✨ Generate Smart Unique Name</button>
+        <button class="btn-primary" onclick="generateAIName(true)">✨ Generate Smart Unique Name</button>
         <button class="btn-secondary" id="fullCopyBtn" onclick="copyFullName(this)">Copy Full Name</button>
     </div>
 </div>
 
 <script>
-    // System Memory Bank (Guarantees zero duplicates)
+    // System History Memory
     const generatedHistory = new Set();
     let currentGender = 'all';
 
-    // AI Procedural Dataset for English
+    // AI Datasets
     const englishAI = {
         maleRoots: ["Alex", "Liam", "Ethan", "Noah", "Oliver", "Lucas", "Mason", "Logan", "James", "Benjamin", "Henry", "Jacob", "William", "Daniel", "Matthew"],
         femaleRoots: ["Emma", "Olivia", "Ava", "Sophia", "Isabella", "Mia", "Amelia", "Harper", "Evelyn", "Abigail", "Emily", "Ella", "Scarlett", "Grace", "Chloe"],
@@ -271,7 +271,6 @@
         surSuffixes: ["son", "ford", "ton", "field", "wood", "berg", "stein", "worth"]
     };
 
-    // AI Procedural Dataset for Arabic
     const arabicAI = {
         maleRoots: ["طارق", "زايد", "فارس", "كريم", "عمر", "أمير", "حمزة", "يوسف", "سليمان", "عبد الله", "زياد", "راشد", "سهيل", "ياسين", "سليم", "بلال", "سعود", "فيصل"],
         femaleRoots: ["نور", "ليلى", "زهراء", "آية", "مريم", "أميرة", "سارة", "فاطمة", "حواء", "خديجة", "ريم", "جودي", "دانة", "سلمى", "هدى", "لينا", "ياسمين", "زينب"],
@@ -279,7 +278,6 @@
         surRoots: ["حسن", "نجار", "سيد", "شريف", "ملك", "علي", "منصور", "رشيد", "فاروق", "قاسم", "هاشم", "طاهر", "حداد", "عزيز", "سليمان", "حكيم", "عطاء", "صالح"]
     };
 
-    // AI Procedural Dataset for French
     const frenchAI = {
         maleRoots: ["Ibrahim", "Oumar", "Moussa", "Tariq", "Faris", "Karim", "Kouassi", "Koffi", "Jean-Baptiste", "Stephane", "Franck", "Marc", "Tiemoko", "Bakary"],
         femaleRoots: ["Awa", "Bintou", "Fatou", "Nour", "Layla", "Aya", "Maryam", "Zahra", "Adjoua", "Amenan", "Affoué", "Akissi", "Kadiatou", "Marie", "Christelle"],
@@ -290,22 +288,18 @@
         currentGender = gender;
         document.querySelectorAll('.btn-filter').forEach(btn => btn.classList.remove('active'));
         element.classList.add('active');
-        generateAIName();
+        generateAIName(true);
     }
 
     function getRandomItem(arr) {
         return arr[Math.floor(Math.random() * arr.length)];
     }
 
-    // Smart Procedural Generation Engine
     function buildAILastName(lang) {
         if (lang === 'en') {
             const mode = Math.random();
-            if (mode < 0.3) {
-                return getRandomItem(englishAI.surPrefixes) + getRandomItem(englishAI.surRoots);
-            } else if (mode < 0.6) {
-                return getRandomItem(englishAI.surRoots) + getRandomItem(englishAI.surSuffixes);
-            }
+            if (mode < 0.3) return getRandomItem(englishAI.surPrefixes) + getRandomItem(englishAI.surRoots);
+            if (mode < 0.6) return getRandomItem(englishAI.surRoots) + getRandomItem(englishAI.surSuffixes);
             return getRandomItem(englishAI.surRoots);
         } else if (lang === 'ar') {
             const prefix = getRandomItem(arabicAI.surPrefixes);
@@ -316,8 +310,19 @@
         }
     }
 
-    function generateAIName() {
+    function generateAIName(isUserClick = false) {
         const langMode = document.getElementById('languageSelect').value;
+
+        // If app reopens and user didn't request a new name, restore saved name
+        if (!isUserClick) {
+            const savedState = sessionStorage.getItem('saved_name_state');
+            if (savedState) {
+                const data = JSON.parse(savedState);
+                applyNameToUI(data.first, data.last, data.lang);
+                return;
+            }
+        }
+
         let attempts = 0;
         let selectedFirst = "";
         let selectedLast = "";
@@ -325,25 +330,14 @@
 
         while (attempts < 1000) {
             let pool = [];
-            if (langMode === 'en') {
-                if (currentGender === 'male') pool = englishAI.maleRoots;
-                else if (currentGender === 'female') pool = englishAI.femaleRoots;
-                else pool = [...englishAI.maleRoots, ...englishAI.femaleRoots];
-            } else if (langMode === 'ar') {
-                if (currentGender === 'male') pool = arabicAI.maleRoots;
-                else if (currentGender === 'female') pool = arabicAI.femaleRoots;
-                else pool = [...arabicAI.maleRoots, ...arabicAI.femaleRoots];
-            } else if (langMode === 'fr') {
-                if (currentGender === 'male') pool = frenchAI.maleRoots;
-                else if (currentGender === 'female') pool = frenchAI.femaleRoots;
-                else pool = [...frenchAI.maleRoots, ...frenchAI.femaleRoots];
-            }
+            if (langMode === 'en') pool = currentGender === 'male' ? englishAI.maleRoots : currentGender === 'female' ? englishAI.femaleRoots : [...englishAI.maleRoots, ...englishAI.femaleRoots];
+            else if (langMode === 'ar') pool = currentGender === 'male' ? arabicAI.maleRoots : currentGender === 'female' ? arabicAI.femaleRoots : [...arabicAI.maleRoots, ...arabicAI.femaleRoots];
+            else if (langMode === 'fr') pool = currentGender === 'male' ? frenchAI.maleRoots : currentGender === 'female' ? frenchAI.femaleRoots : [...frenchAI.maleRoots, ...frenchAI.femaleRoots];
 
             selectedFirst = getRandomItem(pool);
             selectedLast = buildAILastName(langMode);
             fullNameKey = `${selectedFirst} ${selectedLast}_${langMode}`;
 
-            // Check against global memory to ensure no duplicates
             if (!generatedHistory.has(fullNameKey)) {
                 generatedHistory.add(fullNameKey);
                 break;
@@ -351,13 +345,25 @@
             attempts++;
         }
 
+        // Save state to sessionStorage
+        sessionStorage.setItem('saved_name_state', JSON.stringify({
+            first: selectedFirst,
+            last: selectedLast,
+            lang: langMode,
+            gender: currentGender
+        }));
+
+        applyNameToUI(selectedFirst, selectedLast, langMode);
+    }
+
+    function applyNameToUI(first, last, lang) {
         const fEl = document.getElementById('firstNameVal');
         const lEl = document.getElementById('lastNameVal');
 
-        fEl.textContent = selectedFirst;
-        lEl.textContent = selectedLast;
+        fEl.textContent = first;
+        lEl.textContent = last;
 
-        if (langMode === 'ar') {
+        if (lang === 'ar') {
             fEl.classList.add('rtl-text');
             lEl.classList.add('rtl-text');
         } else {
@@ -366,7 +372,7 @@
         }
     }
 
-    // Silent Copy Functions (No Alert Popups)
+    // Silent Copy Functions
     function copySingle(elementId, btnElement) {
         const text = document.getElementById(elementId).textContent;
         if (text === "-") return;
@@ -403,7 +409,7 @@
     }
 
     window.onload = function() {
-        generateAIName();
+        generateAIName(false);
     };
 </script>
 
