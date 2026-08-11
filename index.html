@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Smart Name Generator</title>
+    <title>AI Human Name Generator</title>
     <style>
         * {
             box-sizing: border-box;
@@ -208,19 +208,19 @@
 <body>
 
 <div class="card">
-    <h2>AI Smart Name Generator</h2>
+    <h2>AI Human Name Generator</h2>
 
-    <!-- Language Selector -->
+    <!-- Country / Language Option -->
     <div class="lang-select-box">
-        <label for="languageSelect">Select Language / Language Choose</label>
-        <select id="languageSelect" class="select-input" onchange="generateAIName(true)">
-            <option value="en">English Names 🇬🇧</option>
-            <option value="ar">Arabic Names (العربية) 🇸🇦</option>
-            <option value="fr">French Names (Français) 🇫🇷</option>
+        <label for="languageSelect">Select Country / Region</label>
+        <select id="languageSelect" class="select-input" onchange="generateHumanAIName(true)">
+            <option value="en">English (US / UK / Global) 🇬🇧 🇺🇸</option>
+            <option value="ar">Arabic (Middle East / Gulf) 🇸🇦 🇦🇪</option>
+            <option value="fr">French (Europe / West Africa) 🇫🇷 🇨🇮</option>
         </select>
     </div>
     
-    <!-- Gender Filter Buttons -->
+    <!-- Gender Controls -->
     <div class="controls">
         <button class="btn-filter active" id="btn-all" onclick="setGender('all', this)">All</button>
         <button class="btn-filter" id="btn-male" onclick="setGender('male', this)">Male 👨</button>
@@ -252,76 +252,74 @@
 
     <!-- Action Buttons -->
     <div class="action-btns">
-        <button class="btn-primary" onclick="generateAIName(true)">✨ Generate Smart Unique Name</button>
+        <button class="btn-primary" onclick="generateHumanAIName(true)">✨ Generate Natural Human Name</button>
         <button class="btn-secondary" id="fullCopyBtn" onclick="copyFullName(this)">Copy Full Name</button>
     </div>
 </div>
 
 <script>
-    // Global History Set
-    const generatedHistory = new Set();
     let currentGender = 'all';
 
-    // AI Datasets
-    const englishAI = {
-        maleRoots: ["Alex", "Liam", "Ethan", "Noah", "Oliver", "Lucas", "Mason", "Logan", "James", "Benjamin", "Henry", "Jacob", "William", "Daniel", "Matthew"],
-        femaleRoots: ["Emma", "Olivia", "Ava", "Sophia", "Isabella", "Mia", "Amelia", "Harper", "Evelyn", "Abigail", "Emily", "Ella", "Scarlett", "Grace", "Chloe"],
-        surPrefixes: ["Mc", "O'", "Fitz", "Van ", "De "],
-        surRoots: ["Smith", "Johnson", "Williams", "Brown", "Jones", "Garcia", "Miller", "Davis", "Rodriguez", "Martinez", "Hernandez", "Lopez", "Gonzalez", "Wilson", "Anderson", "Thomas", "Taylor", "Moore", "Jackson", "Martin"],
-        surSuffixes: ["son", "ford", "ton", "field", "wood", "berg", "stein", "worth"]
-    };
-
-    const arabicAI = {
-        maleRoots: ["طارق", "زايد", "فارس", "كريم", "عمر", "أمير", "حمزة", "يوسف", "سليمان", "عبد الله", "زياد", "راشد", "سهيل", "ياسين", "سليم", "بلال", "سعود", "فيصل"],
-        femaleRoots: ["نور", "ليلى", "زهراء", "آية", "مريم", "أميرة", "سارة", "فاطمة", "حواء", "خديجة", "ريم", "جودي", "دانة", "سلمى", "هدى", "لينا", "ياسمين", "زينب"],
-        surPrefixes: ["الـ", "آل ", "بن ", "أبو "],
-        surRoots: ["حسن", "نجار", "سيد", "شريف", "ملك", "علي", "منصور", "رشيد", "فاروق", "قاسم", "هاشم", "طاهر", "حداد", "عزيز", "سليمان", "حكيم", "عطاء", "صالح"]
-    };
-
-    const frenchAI = {
-        maleRoots: ["Ibrahim", "Oumar", "Moussa", "Tariq", "Faris", "Karim", "Kouassi", "Koffi", "Jean-Baptiste", "Stephane", "Franck", "Marc", "Tiemoko", "Bakary"],
-        femaleRoots: ["Awa", "Bintou", "Fatou", "Nour", "Layla", "Aya", "Maryam", "Zahra", "Adjoua", "Amenan", "Affoué", "Akissi", "Kadiatou", "Marie", "Christelle"],
-        surRoots: ["Coulibaly", "Traoré", "Diallo", "Touré", "Cissé", "Bamba", "Koné", "Kouamé", "N'Guessan", "Yao", "Ouattara", "Diarra", "Fofana", "Gbagbo", "Bedie"]
+    // Natural Human Datasets (Authentic & Realistic)
+    const humanDatasets = {
+        en: {
+            male: ["Liam", "Noah", "Oliver", "James", "Elijah", "William", "Henry", "Lucas", "Benjamin", "Theodore", "Mateo", "Levi", "Alexander", "Jackson", "Daniel", "Michael", "Mason", "Sebastian", "Ethan", "Logan", "Owen", "Samuel", "Jacob", "Asher", "Joseph"],
+            female: ["Olivia", "Emma", "Charlotte", "Amelia", "Sophia", "Isabella", "Ava", "Mia", "Evelyn", "Harper", "Luna", "Camila", "Gianna", "Elizabeth", "Eleanor", "Ella", "Abigail", "Sophia", "Avery", "Scarlett", "Emily", "Hazel", "Chloe", "Penelope"],
+            surnames: ["Smith", "Johnson", "Williams", "Brown", "Jones", "Garcia", "Miller", "Davis", "Rodriguez", "Martinez", "Hernandez", "Lopez", "Gonzalez", "Wilson", "Anderson", "Thomas", "Taylor", "Moore", "Jackson", "Martin", "Lee", "Perez", "Thompson", "White", "Harris", "Clark", "Lewis", "Robinson", "Walker", "Young"]
+        },
+        ar: {
+            male: ["عمر", "حمزة", "طارق", "يوسف", "زياد", "كريم", "فارس", "أمير", "سليمان", "عبد الله", "فيصل", "راشد", "سهيل", "ياسين", "سليم", "بلال", "سعود", "خالد", "حسن", "مالك"],
+            female: ["نور", "ليلى", "زهراء", "آية", "مريم", "أميرة", "سارة", "فاطمة", "حواء", "خديجة", "ريم", "جودي", "دانة", "سلمى", "هدى", "لينا", "ياسمين", "زينب", "روعة", "شهد"],
+            surnames: ["المنصور", "الفارسي", "الهاشمي", "النجار", "الزهراني", "الغامدي", "الشمري", "الحربي", "العتيبي", "السيد", "الشريف", "المصري", "القحطاني", "المالكي", "الدوسري", "التميمي"]
+        },
+        fr: {
+            male: ["Ibrahim", "Oumar", "Moussa", "Tariq", "Kouassi", "Koffi", "Lucas", "Gabriel", "Louis", "Raphaël", "Arthur", "Hugo", "Jules", "Maël", "Liam", "Franck", "Bakary", "Stephane"],
+            female: ["Awa", "Bintou", "Fatou", "Nour", "Layla", "Aya", "Maryam", "Adjoua", "Amenan", "Jade", "Louise", "Ambre", "Alba", "Emma", "Rose", "Alice", "Kadiatou", "Marie"],
+            surnames: ["Coulibaly", "Traoré", "Diallo", "Touré", "Cissé", "Bamba", "Koné", "Kouamé", "N'Guessan", "Diarra", "Fofana", "Ouattara", "Dubois", "Laurent", "Bernard", "Thomas", "Moreau"]
+        }
     };
 
     function setGender(gender, element) {
         currentGender = gender;
         document.querySelectorAll('.btn-filter').forEach(btn => btn.classList.remove('active'));
         element.classList.add('active');
-        generateAIName(true);
+        generateHumanAIName(true);
     }
 
     function getRandomItem(arr) {
         return arr[Math.floor(Math.random() * arr.length)];
     }
 
-    function buildAILastName(lang) {
-        if (lang === 'en') {
-            const mode = Math.random();
-            if (mode < 0.3) return getRandomItem(englishAI.surPrefixes) + getRandomItem(englishAI.surRoots);
-            if (mode < 0.6) return getRandomItem(englishAI.surRoots) + getRandomItem(englishAI.surSuffixes);
-            return getRandomItem(englishAI.surRoots);
-        } else if (lang === 'ar') {
-            const prefix = getRandomItem(arabicAI.surPrefixes);
-            const root = getRandomItem(arabicAI.surRoots);
-            return (prefix === "الـ") ? ("ال" + root) : (prefix + root);
-        } else {
-            return getRandomItem(frenchAI.surRoots);
+    // Dynamic History Memory Manager (Uses LocalStorage to avoid duplicates)
+    function getHistory() {
+        try {
+            return JSON.parse(localStorage.getItem('ai_human_names_history')) || [];
+        } catch(e) {
+            return [];
         }
     }
 
-    function generateAIName(isUserClick = false) {
+    function saveToHistory(fullNameKey) {
+        let history = getHistory();
+        if (!history.includes(fullNameKey)) {
+            history.push(fullNameKey);
+            // Keep memory optimized to last 5000 generated names
+            if (history.length > 5000) history.shift();
+            localStorage.setItem('ai_human_names_history', JSON.stringify(history));
+        }
+    }
+
+    function generateHumanAIName(isUserClick = false) {
         const langMode = document.getElementById('languageSelect').value;
 
-        // Restore saved name from localStorage if page reloaded automatically
+        // Restore saved name if website reloaded automatically
         if (!isUserClick) {
-            const savedState = localStorage.getItem('ai_name_state_lock');
+            const savedState = localStorage.getItem('ai_current_name_lock');
             if (savedState) {
                 const data = JSON.parse(savedState);
                 document.getElementById('languageSelect').value = data.lang;
                 currentGender = data.gender || 'all';
                 
-                // Update gender button UI
                 document.querySelectorAll('.btn-filter').forEach(btn => btn.classList.remove('active'));
                 const activeBtn = document.getElementById(`btn-${currentGender}`);
                 if (activeBtn) activeBtn.classList.add('active');
@@ -331,30 +329,40 @@
             }
         }
 
+        const dataset = humanDatasets[langMode] || humanDatasets.en;
+        const history = getHistory();
+
         let attempts = 0;
         let selectedFirst = "";
         let selectedLast = "";
         let fullNameKey = "";
 
-        while (attempts < 1000) {
-            let pool = [];
-            if (langMode === 'en') pool = currentGender === 'male' ? englishAI.maleRoots : currentGender === 'female' ? englishAI.femaleRoots : [...englishAI.maleRoots, ...englishAI.femaleRoots];
-            else if (langMode === 'ar') pool = currentGender === 'male' ? arabicAI.maleRoots : currentGender === 'female' ? arabicAI.femaleRoots : [...arabicAI.maleRoots, ...arabicAI.femaleRoots];
-            else if (langMode === 'fr') pool = currentGender === 'male' ? frenchAI.maleRoots : currentGender === 'female' ? frenchAI.femaleRoots : [...frenchAI.maleRoots, ...frenchAI.femaleRoots];
+        // AI Unique Name Combination Engine
+        while (attempts < 2000) {
+            let firstPool = [];
+            if (currentGender === 'male') {
+                firstPool = dataset.male;
+            } else if (currentGender === 'female') {
+                firstPool = dataset.female;
+            } else {
+                firstPool = [...dataset.male, ...dataset.female];
+            }
 
-            selectedFirst = getRandomItem(pool);
-            selectedLast = buildAILastName(langMode);
+            selectedFirst = getRandomItem(firstPool);
+            selectedLast = getRandomItem(dataset.surnames);
+
             fullNameKey = `${selectedFirst} ${selectedLast}_${langMode}`;
 
-            if (!generatedHistory.has(fullNameKey)) {
-                generatedHistory.add(fullNameKey);
+            // Ensure name is completely unique and never used before
+            if (!history.includes(fullNameKey)) {
+                saveToHistory(fullNameKey);
                 break;
             }
             attempts++;
         }
 
-        // Store state using persistent localStorage
-        localStorage.setItem('ai_name_state_lock', JSON.stringify({
+        // Lock name in local memory so country/IP change won't reset it
+        localStorage.setItem('ai_current_name_lock', JSON.stringify({
             first: selectedFirst,
             last: selectedLast,
             lang: langMode,
@@ -380,7 +388,7 @@
         }
     }
 
-    // Copy Functions
+    // Silent Copy Functions
     function copySingle(elementId, btnElement) {
         const text = document.getElementById(elementId).textContent;
         if (text === "-") return;
@@ -417,7 +425,7 @@
     }
 
     window.onload = function() {
-        generateAIName(false);
+        generateHumanAIName(false);
     };
 </script>
 
