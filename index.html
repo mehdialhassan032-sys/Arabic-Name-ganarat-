@@ -210,7 +210,7 @@
 <div class="card">
     <h2>AI Human Name Generator</h2>
 
-    <!-- Country / Language Option -->
+    <!-- Country Option -->
     <div class="lang-select-box">
         <label for="languageSelect">Select Country / Region</label>
         <select id="languageSelect" class="select-input" onchange="generateHumanAIName(true)">
@@ -229,8 +229,6 @@
 
     <!-- Display Area -->
     <div class="display-area">
-        
-        <!-- First Name Row -->
         <div class="name-row">
             <div class="name-info">
                 <div class="label">First Name</div>
@@ -239,7 +237,6 @@
             <button class="btn-copy-small" onclick="copySingle('firstNameVal', this)">Copy First</button>
         </div>
 
-        <!-- Last Name Row -->
         <div class="name-row">
             <div class="name-info">
                 <div class="label">Last Name</div>
@@ -247,7 +244,6 @@
             </div>
             <button class="btn-copy-small" onclick="copySingle('lastNameVal', this)">Copy Last</button>
         </div>
-
     </div>
 
     <!-- Action Buttons -->
@@ -260,7 +256,6 @@
 <script>
     let currentGender = 'all';
 
-    // Natural Human Datasets (Authentic & Realistic)
     const humanDatasets = {
         en: {
             male: ["Liam", "Noah", "Oliver", "James", "Elijah", "William", "Henry", "Lucas", "Benjamin", "Theodore", "Mateo", "Levi", "Alexander", "Jackson", "Daniel", "Michael", "Mason", "Sebastian", "Ethan", "Logan", "Owen", "Samuel", "Jacob", "Asher", "Joseph"],
@@ -290,7 +285,6 @@
         return arr[Math.floor(Math.random() * arr.length)];
     }
 
-    // Dynamic History Memory Manager (Uses LocalStorage to avoid duplicates)
     function getHistory() {
         try {
             return JSON.parse(localStorage.getItem('ai_human_names_history')) || [];
@@ -303,7 +297,6 @@
         let history = getHistory();
         if (!history.includes(fullNameKey)) {
             history.push(fullNameKey);
-            // Keep memory optimized to last 5000 generated names
             if (history.length > 5000) history.shift();
             localStorage.setItem('ai_human_names_history', JSON.stringify(history));
         }
@@ -312,7 +305,6 @@
     function generateHumanAIName(isUserClick = false) {
         const langMode = document.getElementById('languageSelect').value;
 
-        // Restore saved name if website reloaded automatically
         if (!isUserClick) {
             const savedState = localStorage.getItem('ai_current_name_lock');
             if (savedState) {
@@ -337,7 +329,6 @@
         let selectedLast = "";
         let fullNameKey = "";
 
-        // AI Unique Name Combination Engine
         while (attempts < 2000) {
             let firstPool = [];
             if (currentGender === 'male') {
@@ -353,7 +344,6 @@
 
             fullNameKey = `${selectedFirst} ${selectedLast}_${langMode}`;
 
-            // Ensure name is completely unique and never used before
             if (!history.includes(fullNameKey)) {
                 saveToHistory(fullNameKey);
                 break;
@@ -361,7 +351,6 @@
             attempts++;
         }
 
-        // Lock name in local memory so country/IP change won't reset it
         localStorage.setItem('ai_current_name_lock', JSON.stringify({
             first: selectedFirst,
             last: selectedLast,
@@ -388,40 +377,64 @@
         }
     }
 
-    // Silent Copy Functions
-    function copySingle(elementId, btnElement) {
-        const text = document.getElementById(elementId).textContent;
-        if (text === "-") return;
+    // Fixed & Fallback Copy Engine
+    function fallbackCopyText(textToCopy) {
+        const textArea = document.createElement("textarea");
+        textArea.value = textToCopy;
+        textArea.style.position = "fixed";
+        textArea.style.left = "-9999px";
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        
+        try {
+            document.execCommand('copy');
+        } catch (err) {
+            console.error('Fallback copy failed: ', err);
+        }
+        
+        document.body.removeChild(textArea);
+    }
 
-        navigator.clipboard.writeText(text).then(() => {
-            const originalText = btnElement.textContent;
-            btnElement.textContent = "Copied! ✓";
+    function copyTextToClipboard(text, btnElement, successLabel) {
+        if (!text || text === "-") return;
+
+        const originalText = btnElement.textContent;
+
+        const handleSuccess = () => {
+            btnElement.textContent = successLabel;
             btnElement.classList.add('copied');
-            
             setTimeout(() => {
                 btnElement.textContent = originalText;
                 btnElement.classList.remove('copied');
             }, 1200);
-        });
+        };
+
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(text)
+                .then(handleSuccess)
+                .catch(() => {
+                    fallbackCopyText(text);
+                    handleSuccess();
+                });
+        } else {
+            fallbackCopyText(text);
+            handleSuccess();
+        }
+    }
+
+    function copySingle(elementId, btnElement) {
+        const text = document.getElementById(elementId).textContent;
+        copyTextToClipboard(text, btnElement, "Copied! ✓");
     }
 
     function copyFullName(btnElement) {
         const fName = document.getElementById('firstNameVal').textContent;
         const lName = document.getElementById('lastNameVal').textContent;
-
-        if (fName === "-") return;
-
+        if (fName === "-" || lName === "-") return;
+        
         const fullName = `${fName} ${lName}`;
-        navigator.clipboard.writeText(fullName).then(() => {
-            const originalText = btnElement.textContent;
-            btnElement.textContent = "Copied Full Name! ✓";
-            btnElement.classList.add('copied');
-
-            setTimeout(() => {
-                btnElement.textContent = originalText;
-                btnElement.classList.remove('copied');
-            }, 1200);
-        });
+        copyTextToClipboard(fullName, btnElement, "Copied Full Name! ✓");
     }
 
     window.onload = function() {
