@@ -288,9 +288,10 @@
     <div class="lang-select-box">
         <label for="languageSelect">Select Country / Region</label>
         <select id="languageSelect" class="select-input" onchange="generateHumanAIName(true)">
+            <option value="sy">Syria (سوريا) 🇸🇾</option>
             <option value="en">English (US / UK / Global) 🇬🇧 🇺🇸</option>
-            <option value="ar">Arabic (Middle East / Gulf) 🇸🇦 🇦🇪</option>
-            <option value="fr">French (Europe / West Africa) 🇫🇷 🇨🇮</option>
+            <option value="ar">Arabic (Gulf / General) 🇸🇦 🇦🇪</option>
+            <option value="fr">French (Europe / Africa) 🇫🇷 🇨🇮</option>
         </select>
     </div>
     
@@ -359,8 +360,13 @@
     // --- 2. ADVANCED REAL-HUMAN AI GENERATION ENGINE ---
     let currentGender = 'all';
 
-    // Phonetic & Morphological Datasets for Generative AI Naming
     const aiPhonetics = {
+        sy: {
+            male: ["مجد", "يزن", "باسل", "إياد", "ملهم", "غياث", "علاء", "قصي", "فراس", "وائل", "وسيم", "تمام", "أنس", "نزار", "بشار", "عروة", "ماهر", "مأمون", "سامر", "نديم", "طارق", "زياد", "كريم", "حسام", "شادي"],
+            female: ["شام", "سيدرا", "جوليا", "يارا", "لين", "نايا", "لجين", "رنيم", "ماسة", "كندا", "سلاف", "سيرين", "ديمة", "بيسان", "تالا", "جنى", "فرح", "نور", "ميس", "راما", "روان", "تولين"],
+            surPrefixes: ["الـ", "آل "],
+            surnames: ["الشامي", "الحلبي", "الحمصي", "الخطيب", "الحموي", "اللاذقاني", "العطار", "الحكيم", "النجار", "السيد", "القدسي", "الكردي", "الحسن", "الدمشقي", "الرفاعي", "الزهري", "الكيالي", "البرزي", "الملا", "الأسد"]
+        },
         en: {
             malePrefixes: ["Al", "Ben", "Dan", "Ed", "Fred", "Gar", "Har", "Jack", "Ken", "Leo", "Matt", "Nate", "Phil", "Ray", "Sam", "Tom", "Will", "Zack", "Bro", "Clint", "Dust", "Ethan", "Felix", "Gavin"],
             maleSuffixes: ["ander", "jamin", "iel", "ward", "erick", "rett", "old", "son", "nard", "ton", "vis", "mon", "rence", "cent", "ry", "ver", "ton", "tian"],
@@ -372,16 +378,16 @@
         },
         ar: {
             malePrefixes: ["عبد ", "أبو ", "بن "],
-            maleBases: ["الله", "الرحمن", "الرحيم", "الملك", "القدوس", "عمر", "حمزة", "طارق", "يوسف", "زياد", "كريم", "فارس", "أمير", "سليمان", "فيصل", "راشد", "سهيل", "ياسين", "سليم", "بلال", "سعود", "خالد", "حسن", "مالك", "وليد"],
-            femaleBases: ["نور", "ليلى", "زهراء", "آية", "مريم", "أميرة", "سارة", "فاطمة", "حواء", "خديجة", "ريم", "جودي", "دانة", "سلمى", "هدى", "لينا", "ياسمين", "زينب", "روعة", "شهد", "مرام", "ريناد", "تالا"],
+            maleBases: ["الله", "الرحمن", "الرحيم", "الملك", "عمر", "حمزة", "طارق", "يوسف", "زياد", "كريم", "فارس", "أمير", "سليمان", "فيصل", "راشد", "سهيل", "ياسين", "سليم", "بلال", "سعود", "خالد", "حسن", "مالك", "وليد"],
+            femaleBases: ["نور", "ليلى", "زهراء", "آية", "مريم", "أميرة", "سارة", "فاطمة", "حواء", "خديجة", "ريم", "جودي", "دانة", "سلمى", "هدى", "لينا", "ياسمين", "زينب", "روعة", "شهد", "مرام", "ريناد"],
             surPrefixes: ["الـ", "آل "],
-            surBases: ["منصور", "فارسي", "هاشمي", "نجار", "زهراني", "غامدي", "شمري", "حربي", "عتيبي", "سيد", "شريف", "مصري", "قحطاني", "مالكي", "دوسري", "تميمي", "عمري", "رشيد", "حداد", "خالد"]
+            surBases: ["منصور", "فارسي", "هاشمي", "نجار", "زهراني", "غامدي", "شمري", "حربي", "عتيبي", "سيد", "شريف", "مصري", "قحطاني", "مالكي", "دوسري", "تميمي", "عمري", "رشيد", "حداد"]
         },
         fr: {
             malePrefixes: ["Jean-", "Marc-", "Pierre-", "Louis-"],
             maleBases: ["Luc", "Paul", "Antoine", "Baptiste", "Franck", "Jacques", "Michel", "Ibrahim", "Oumar", "Moussa", "Tariq", "Kouassi", "Koffi", "Bakary", "Stephane", "Gaston", "Laurent"],
-            femaleBases: ["Awa", "Bintou", "Fatou", "Nour", "Layla", "Aya", "Maryam", "Adjoua", "Amenan", "Jade", "Louise", "Ambre", "Alba", "Emma", "Rose", "Alice", "Kadiatou", "Marie", "Chantal", "Claire"],
-            surBases: ["Coulibaly", "Traoré", "Diallo", "Touré", "Cissé", "Bamba", "Koné", "Kouamé", "N'Guessan", "Diarra", "Fofana", "Ouattara", "Dubois", "Laurent", "Bernard", "Thomas", "Moreau", "Fontaine", "Rousseau"]
+            femaleBases: ["Awa", "Bintou", "Fatou", "Nour", "Layla", "Aya", "Maryam", "Adjoua", "Amenan", "Jade", "Louise", "Ambre", "Alba", "Emma", "Rose", "Alice", "Kadiatou", "Marie", "Chantal"],
+            surBases: ["Coulibaly", "Traoré", "Diallo", "Touré", "Cissé", "Bamba", "Koné", "Kouamé", "N'Guessan", "Diarra", "Fofana", "Ouattara", "Dubois", "Laurent", "Bernard", "Thomas", "Moreau"]
         }
     };
 
@@ -394,51 +400,37 @@
         return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
     }
 
-    // AI Dynamic Real Human Name Synthesizer
     function synthesizeHumanName(lang, gender) {
-        const data = aiPhonetics[lang] || aiPhonetics.en;
+        const data = aiPhonetics[lang] || aiPhonetics.sy;
         let firstName = "";
         let lastName = "";
 
         const isMale = (gender === 'male') ? true : (gender === 'female') ? false : Math.random() < 0.5;
 
-        // 1. Generate First Name dynamically
-        if (lang === 'en') {
+        // Syrian Real Human Naming Logic
+        if (lang === 'sy') {
+            firstName = isMale ? getRandomItem(data.male) : getRandomItem(data.female);
+            lastName = getRandomItem(data.surnames);
+        } else if (lang === 'en') {
             if (isMale) {
                 if (Math.random() < 0.6) firstName = getRandomItem(data.malePrefixes) + getRandomItem(data.maleSuffixes);
-                else firstName = getRandomItem(["Liam", "Noah", "Oliver", "James", "Elijah", "William", "Henry", "Lucas", "Benjamin", "Theodore", "Mateo", "Levi", "Alexander", "Jackson", "Daniel", "Michael", "Mason", "Sebastian", "Ethan", "Logan"]);
+                else firstName = getRandomItem(["Liam", "Noah", "Oliver", "James", "Elijah", "William", "Henry", "Lucas", "Benjamin", "Theodore", "Mateo", "Levi", "Alexander", "Jackson", "Daniel"]);
             } else {
                 if (Math.random() < 0.6) firstName = getRandomItem(data.femalePrefixes) + getRandomItem(data.femaleSuffixes);
-                else firstName = getRandomItem(["Olivia", "Emma", "Charlotte", "Amelia", "Sophia", "Isabella", "Ava", "Mia", "Evelyn", "Harper", "Luna", "Camila", "Gianna", "Elizabeth", "Eleanor", "Ella", "Abigail", "Sophia"]);
+                else firstName = getRandomItem(["Olivia", "Emma", "Charlotte", "Amelia", "Sophia", "Isabella", "Ava", "Mia", "Evelyn", "Harper", "Luna", "Camila", "Gianna"]);
             }
             firstName = capitalize(firstName);
-        } else if (lang === 'ar') {
-            if (isMale) {
-                if (Math.random() < 0.3) firstName = getRandomItem(data.malePrefixes) + getRandomItem(data.maleBases);
-                else firstName = getRandomItem(data.maleBases);
-            } else {
-                firstName = getRandomItem(data.femaleBases);
-            }
-        } else if (lang === 'fr') {
-            if (isMale) {
-                if (Math.random() < 0.25) firstName = getRandomItem(data.malePrefixes) + getRandomItem(data.maleBases);
-                else firstName = getRandomItem(data.maleBases);
-            } else {
-                firstName = getRandomItem(data.femaleBases);
-            }
-        }
-
-        // 2. Generate Last Name dynamically
-        if (lang === 'en') {
             const mode = Math.random();
             if (mode < 0.2) lastName = getRandomItem(data.surPrefixes) + capitalize(getRandomItem(data.surBases));
             else if (mode < 0.5) lastName = capitalize(getRandomItem(data.surBases)) + getRandomItem(data.surSuffixes);
             else lastName = capitalize(getRandomItem(data.surBases));
         } else if (lang === 'ar') {
+            firstName = isMale ? ((Math.random() < 0.3 ? getRandomItem(data.malePrefixes) : '') + getRandomItem(data.maleBases)) : getRandomItem(data.femaleBases);
             const base = getRandomItem(data.surBases);
             const prefix = getRandomItem(data.surPrefixes);
             lastName = (prefix === "الـ") ? ("ال" + base) : (prefix + base);
         } else if (lang === 'fr') {
+            firstName = isMale ? ((Math.random() < 0.25 ? getRandomItem(data.malePrefixes) : '') + getRandomItem(data.maleBases)) : getRandomItem(data.femaleBases);
             lastName = getRandomItem(data.surBases);
         }
 
@@ -464,7 +456,7 @@
         let history = getHistory();
         if (!history.includes(fullNameKey)) {
             history.push(fullNameKey);
-            if (history.length > 10000) history.shift();
+            if (history.length > 15000) history.shift();
             localStorage.setItem('ai_human_names_history', JSON.stringify(history));
         }
     }
@@ -493,7 +485,7 @@
         let nameObj = { first: "", last: "" };
         let fullNameKey = "";
 
-        while (attempts < 3000) {
+        while (attempts < 4000) {
             nameObj = synthesizeHumanName(langMode, currentGender);
             fullNameKey = `${nameObj.first} ${nameObj.last}_${langMode}`;
 
@@ -521,7 +513,7 @@
         fEl.textContent = first;
         lEl.textContent = last;
 
-        if (lang === 'ar') {
+        if (lang === 'ar' || lang === 'sy') {
             fEl.classList.add('rtl-text');
             lEl.classList.add('rtl-text');
         } else {
