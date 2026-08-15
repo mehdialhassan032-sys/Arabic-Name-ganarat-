@@ -19,69 +19,6 @@
             align-items: center;
             min-height: 100vh;
             padding: 20px;
-            position: relative;
-        }
-
-        /* Privacy Lock Overlay */
-        .lock-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(15, 23, 42, 0.95);
-            backdrop-filter: blur(12px);
-            z-index: 9999;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            padding: 20px;
-        }
-
-        .lock-box {
-            background: #ffffff;
-            padding: 30px;
-            border-radius: 16px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-            width: 100%;
-            max-width: 360px;
-            text-align: center;
-        }
-
-        .lock-box h3 {
-            color: #1e293b;
-            margin-bottom: 8px;
-        }
-
-        .lock-box p {
-            color: #64748b;
-            font-size: 0.85rem;
-            margin-bottom: 20px;
-        }
-
-        .pass-input {
-            width: 100%;
-            padding: 12px;
-            border-radius: 8px;
-            border: 2px solid #cbd5e1;
-            font-size: 1.1rem;
-            text-align: center;
-            letter-spacing: 4px;
-            outline: none;
-            margin-bottom: 15px;
-        }
-
-        .pass-input:focus {
-            border-color: #0f766e;
-        }
-
-        .error-msg {
-            color: #ef4444;
-            font-size: 0.8rem;
-            font-weight: 600;
-            display: none;
-            margin-bottom: 10px;
         }
 
         .card {
@@ -270,17 +207,6 @@
 </head>
 <body>
 
-<!-- Security Lock Screen -->
-<div class="lock-screen" id="lockScreen">
-    <div class="lock-box">
-        <h3>Protected Access</h3>
-        <p>Enter 6-digit PIN to access AI Human Name Generator</p>
-        <input type="password" id="passInput" class="pass-input" maxlength="6" placeholder="••••••" />
-        <div class="error-msg" id="errorMsg">Incorrect Password! Access Denied.</div>
-        <button class="btn-primary" style="width: 100%;" onclick="unlockApp()">Unlock Website</button>
-    </div>
-</div>
-
 <div class="card">
     <h2>AI Human Name Generator</h2>
 
@@ -288,10 +214,9 @@
     <div class="lang-select-box">
         <label for="languageSelect">Select Country / Region</label>
         <select id="languageSelect" class="select-input" onchange="generateHumanAIName(true)">
-            <option value="sy">Syria (سوريا) 🇸🇾</option>
             <option value="en">English (US / UK / Global) 🇬🇧 🇺🇸</option>
-            <option value="ar">Arabic (Gulf / General) 🇸🇦 🇦🇪</option>
-            <option value="fr">French (Europe / Africa) 🇫🇷 🇨🇮</option>
+            <option value="ar">Arabic (Middle East / Gulf) 🇸🇦 🇦🇪</option>
+            <option value="fr">French (Europe / West Africa) 🇫🇷 🇨🇮</option>
         </select>
     </div>
     
@@ -329,119 +254,35 @@
 </div>
 
 <script>
-    // --- 1. PRIVACY LOCK SYSTEM ---
-    const APP_PASS = "876183";
-
-    function checkAuth() {
-        const isUnlocked = sessionStorage.getItem('app_unlocked');
-        if (isUnlocked === 'true') {
-            document.getElementById('lockScreen').style.display = 'none';
-        }
-    }
-
-    function unlockApp() {
-        const input = document.getElementById('passInput').value;
-        const err = document.getElementById('errorMsg');
-        
-        if (input === APP_PASS) {
-            sessionStorage.setItem('app_unlocked', 'true');
-            document.getElementById('lockScreen').style.display = 'none';
-            err.style.display = 'none';
-        } else {
-            err.style.display = 'block';
-            document.getElementById('passInput').value = '';
-        }
-    }
-
-    document.getElementById('passInput')?.addEventListener('keyup', function(e) {
-        if (e.key === 'Enter') unlockApp();
-    });
-
-    // --- 2. ADVANCED REAL-HUMAN AI GENERATION ENGINE ---
     let currentGender = 'all';
 
-    const aiPhonetics = {
-        sy: {
-            male: ["مجد", "يزن", "باسل", "إياد", "ملهم", "غياث", "علاء", "قصي", "فراس", "وائل", "وسيم", "تمام", "أنس", "نزار", "بشار", "عروة", "ماهر", "مأمون", "سامر", "نديم", "طارق", "زياد", "كريم", "حسام", "شادي"],
-            female: ["شام", "سيدرا", "جوليا", "يارا", "لين", "نايا", "لجين", "رنيم", "ماسة", "كندا", "سلاف", "سيرين", "ديمة", "بيسان", "تالا", "جنى", "فرح", "نور", "ميس", "راما", "روان", "تولين"],
-            surPrefixes: ["الـ", "آل "],
-            surnames: ["الشامي", "الحلبي", "الحمصي", "الخطيب", "الحموي", "اللاذقاني", "العطار", "الحكيم", "النجار", "السيد", "القدسي", "الكردي", "الحسن", "الدمشقي", "الرفاعي", "الزهري", "الكيالي", "البرزي", "الملا", "الأسد"]
-        },
+    const humanDatasets = {
         en: {
-            malePrefixes: ["Al", "Ben", "Dan", "Ed", "Fred", "Gar", "Har", "Jack", "Ken", "Leo", "Matt", "Nate", "Phil", "Ray", "Sam", "Tom", "Will", "Zack", "Bro", "Clint", "Dust", "Ethan", "Felix", "Gavin"],
-            maleSuffixes: ["ander", "jamin", "iel", "ward", "erick", "rett", "old", "son", "nard", "ton", "vis", "mon", "rence", "cent", "ry", "ver", "ton", "tian"],
-            femalePrefixes: ["Am", "Bri", "Cl", "Da", "El", "Fay", "Gr", "Ha", "Is", "Jul", "Ka", "Ly", "Ma", "Nor", "Ol", "Pen", "Ros", "Soph", "Tess", "Val", "Viv", "Zoe"],
-            femaleSuffixes: ["elia", "anna", "ora", "phina", "etta", "lyn", "ica", "abel", "ia", "ette", "ine", "issa", "elle", "andra", "een", "icia", "ole"],
-            surPrefixes: ["Mc", "O'", "Van ", "De ", "Fitz"],
-            surBases: ["smith", "johnson", "williams", "brown", "jones", "miller", "davis", "wilson", "taylor", "white", "harris", "martin", "clark", "lewis", "walker", "hall", "young", "king", "wright"],
-            surSuffixes: ["field", "ford", "wood", "berg", "ton", "stein", "worth", "burn", "ley", "brook", "cross", "mont"]
+            male: ["Liam", "Noah", "Oliver", "James", "Elijah", "William", "Henry", "Lucas", "Benjamin", "Theodore", "Mateo", "Levi", "Alexander", "Jackson", "Daniel", "Michael", "Mason", "Sebastian", "Ethan", "Logan", "Owen", "Samuel", "Jacob", "Asher", "Joseph"],
+            female: ["Olivia", "Emma", "Charlotte", "Amelia", "Sophia", "Isabella", "Ava", "Mia", "Evelyn", "Harper", "Luna", "Camila", "Gianna", "Elizabeth", "Eleanor", "Ella", "Abigail", "Sophia", "Avery", "Scarlett", "Emily", "Hazel", "Chloe", "Penelope"],
+            surnames: ["Smith", "Johnson", "Williams", "Brown", "Jones", "Garcia", "Miller", "Davis", "Rodriguez", "Martinez", "Hernandez", "Lopez", "Gonzalez", "Wilson", "Anderson", "Thomas", "Taylor", "Moore", "Jackson", "Martin", "Lee", "Perez", "Thompson", "White", "Harris", "Clark", "Lewis", "Robinson", "Walker", "Young"]
         },
         ar: {
-            malePrefixes: ["عبد ", "أبو ", "بن "],
-            maleBases: ["الله", "الرحمن", "الرحيم", "الملك", "عمر", "حمزة", "طارق", "يوسف", "زياد", "كريم", "فارس", "أمير", "سليمان", "فيصل", "راشد", "سهيل", "ياسين", "سليم", "بلال", "سعود", "خالد", "حسن", "مالك", "وليد"],
-            femaleBases: ["نور", "ليلى", "زهراء", "آية", "مريم", "أميرة", "سارة", "فاطمة", "حواء", "خديجة", "ريم", "جودي", "دانة", "سلمى", "هدى", "لينا", "ياسمين", "زينب", "روعة", "شهد", "مرام", "ريناد"],
-            surPrefixes: ["الـ", "آل "],
-            surBases: ["منصور", "فارسي", "هاشمي", "نجار", "زهراني", "غامدي", "شمري", "حربي", "عتيبي", "سيد", "شريف", "مصري", "قحطاني", "مالكي", "دوسري", "تميمي", "عمري", "رشيد", "حداد"]
+            male: ["عمر", "حمزة", "طارق", "يوسف", "زياد", "كريم", "فارس", "أمير", "سليمان", "عبد الله", "فيصل", "راشد", "سهيل", "ياسين", "سليم", "بلال", "سعود", "خالد", "حسن", "مالك"],
+            female: ["نور", "ليلى", "زهراء", "آية", "مريم", "أميرة", "سارة", "فاطمة", "حواء", "خديجة", "ريم", "جودي", "دانة", "سلمى", "هدى", "لينا", "ياسمين", "زينب", "روعة", "شهد"],
+            surnames: ["المنصور", "الفارسي", "الهاشمي", "النجار", "الزهراني", "الغامدي", "الشمري", "الحربي", "العتيبي", "السيد", "الشريف", "المصري", "القحطاني", "المالكي", "الدوسري", "التميمي"]
         },
         fr: {
-            malePrefixes: ["Jean-", "Marc-", "Pierre-", "Louis-"],
-            maleBases: ["Luc", "Paul", "Antoine", "Baptiste", "Franck", "Jacques", "Michel", "Ibrahim", "Oumar", "Moussa", "Tariq", "Kouassi", "Koffi", "Bakary", "Stephane", "Gaston", "Laurent"],
-            femaleBases: ["Awa", "Bintou", "Fatou", "Nour", "Layla", "Aya", "Maryam", "Adjoua", "Amenan", "Jade", "Louise", "Ambre", "Alba", "Emma", "Rose", "Alice", "Kadiatou", "Marie", "Chantal"],
-            surBases: ["Coulibaly", "Traoré", "Diallo", "Touré", "Cissé", "Bamba", "Koné", "Kouamé", "N'Guessan", "Diarra", "Fofana", "Ouattara", "Dubois", "Laurent", "Bernard", "Thomas", "Moreau"]
+            male: ["Ibrahim", "Oumar", "Moussa", "Tariq", "Kouassi", "Koffi", "Lucas", "Gabriel", "Louis", "Raphaël", "Arthur", "Hugo", "Jules", "Maël", "Liam", "Franck", "Bakary", "Stephane"],
+            female: ["Awa", "Bintou", "Fatou", "Nour", "Layla", "Aya", "Maryam", "Adjoua", "Amenan", "Jade", "Louise", "Ambre", "Alba", "Emma", "Rose", "Alice", "Kadiatou", "Marie"],
+            surnames: ["Coulibaly", "Traoré", "Diallo", "Touré", "Cissé", "Bamba", "Koné", "Kouamé", "N'Guessan", "Diarra", "Fofana", "Ouattara", "Dubois", "Laurent", "Bernard", "Thomas", "Moreau"]
         }
     };
-
-    function getRandomItem(arr) {
-        return arr[Math.floor(Math.random() * arr.length)];
-    }
-
-    function capitalize(str) {
-        if (!str) return '';
-        return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
-    }
-
-    function synthesizeHumanName(lang, gender) {
-        const data = aiPhonetics[lang] || aiPhonetics.sy;
-        let firstName = "";
-        let lastName = "";
-
-        const isMale = (gender === 'male') ? true : (gender === 'female') ? false : Math.random() < 0.5;
-
-        // Syrian Real Human Naming Logic
-        if (lang === 'sy') {
-            firstName = isMale ? getRandomItem(data.male) : getRandomItem(data.female);
-            lastName = getRandomItem(data.surnames);
-        } else if (lang === 'en') {
-            if (isMale) {
-                if (Math.random() < 0.6) firstName = getRandomItem(data.malePrefixes) + getRandomItem(data.maleSuffixes);
-                else firstName = getRandomItem(["Liam", "Noah", "Oliver", "James", "Elijah", "William", "Henry", "Lucas", "Benjamin", "Theodore", "Mateo", "Levi", "Alexander", "Jackson", "Daniel"]);
-            } else {
-                if (Math.random() < 0.6) firstName = getRandomItem(data.femalePrefixes) + getRandomItem(data.femaleSuffixes);
-                else firstName = getRandomItem(["Olivia", "Emma", "Charlotte", "Amelia", "Sophia", "Isabella", "Ava", "Mia", "Evelyn", "Harper", "Luna", "Camila", "Gianna"]);
-            }
-            firstName = capitalize(firstName);
-            const mode = Math.random();
-            if (mode < 0.2) lastName = getRandomItem(data.surPrefixes) + capitalize(getRandomItem(data.surBases));
-            else if (mode < 0.5) lastName = capitalize(getRandomItem(data.surBases)) + getRandomItem(data.surSuffixes);
-            else lastName = capitalize(getRandomItem(data.surBases));
-        } else if (lang === 'ar') {
-            firstName = isMale ? ((Math.random() < 0.3 ? getRandomItem(data.malePrefixes) : '') + getRandomItem(data.maleBases)) : getRandomItem(data.femaleBases);
-            const base = getRandomItem(data.surBases);
-            const prefix = getRandomItem(data.surPrefixes);
-            lastName = (prefix === "الـ") ? ("ال" + base) : (prefix + base);
-        } else if (lang === 'fr') {
-            firstName = isMale ? ((Math.random() < 0.25 ? getRandomItem(data.malePrefixes) : '') + getRandomItem(data.maleBases)) : getRandomItem(data.femaleBases);
-            lastName = getRandomItem(data.surBases);
-        }
-
-        return { first: firstName, last: lastName };
-    }
 
     function setGender(gender, element) {
         currentGender = gender;
         document.querySelectorAll('.btn-filter').forEach(btn => btn.classList.remove('active'));
         element.classList.add('active');
         generateHumanAIName(true);
+    }
+
+    function getRandomItem(arr) {
+        return arr[Math.floor(Math.random() * arr.length)];
     }
 
     function getHistory() {
@@ -456,7 +297,7 @@
         let history = getHistory();
         if (!history.includes(fullNameKey)) {
             history.push(fullNameKey);
-            if (history.length > 15000) history.shift();
+            if (history.length > 5000) history.shift();
             localStorage.setItem('ai_human_names_history', JSON.stringify(history));
         }
     }
@@ -480,14 +321,28 @@
             }
         }
 
+        const dataset = humanDatasets[langMode] || humanDatasets.en;
         const history = getHistory();
+
         let attempts = 0;
-        let nameObj = { first: "", last: "" };
+        let selectedFirst = "";
+        let selectedLast = "";
         let fullNameKey = "";
 
-        while (attempts < 4000) {
-            nameObj = synthesizeHumanName(langMode, currentGender);
-            fullNameKey = `${nameObj.first} ${nameObj.last}_${langMode}`;
+        while (attempts < 2000) {
+            let firstPool = [];
+            if (currentGender === 'male') {
+                firstPool = dataset.male;
+            } else if (currentGender === 'female') {
+                firstPool = dataset.female;
+            } else {
+                firstPool = [...dataset.male, ...dataset.female];
+            }
+
+            selectedFirst = getRandomItem(firstPool);
+            selectedLast = getRandomItem(dataset.surnames);
+
+            fullNameKey = `${selectedFirst} ${selectedLast}_${langMode}`;
 
             if (!history.includes(fullNameKey)) {
                 saveToHistory(fullNameKey);
@@ -497,13 +352,13 @@
         }
 
         localStorage.setItem('ai_current_name_lock', JSON.stringify({
-            first: nameObj.first,
-            last: nameObj.last,
+            first: selectedFirst,
+            last: selectedLast,
             lang: langMode,
             gender: currentGender
         }));
 
-        applyNameToUI(nameObj.first, nameObj.last, langMode);
+        applyNameToUI(selectedFirst, selectedLast, langMode);
     }
 
     function applyNameToUI(first, last, lang) {
@@ -513,7 +368,7 @@
         fEl.textContent = first;
         lEl.textContent = last;
 
-        if (lang === 'ar' || lang === 'sy') {
+        if (lang === 'ar') {
             fEl.classList.add('rtl-text');
             lEl.classList.add('rtl-text');
         } else {
@@ -522,7 +377,7 @@
         }
     }
 
-    // --- 3. ROBUST COPY ENGINE ---
+    // Fixed & Fallback Copy Engine
     function fallbackCopyText(textToCopy) {
         const textArea = document.createElement("textarea");
         textArea.value = textToCopy;
@@ -583,7 +438,6 @@
     }
 
     window.onload = function() {
-        checkAuth();
         generateHumanAIName(false);
     };
 </script>
